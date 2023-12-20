@@ -10,6 +10,4 @@
     <PackageReference Include="dapper" />
   </ItemGroup>
 
-  <Import Project="../../Directory.Packages.props" />
-
 </Project>
