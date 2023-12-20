@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="dapper" />
+  </ItemGroup>
+
+  <Import Project="../../Directory.Packages.props" />
+
 </Project>
