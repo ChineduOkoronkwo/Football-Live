@@ -45,7 +45,8 @@ namespace DbService.UnitTests
                     null,
                     null,
                     null)).ReturnsAsync(_person1);
-            var result = await _queryService.QuerySingleAsync<TestModel>(_testSql, new object());
+            var parms = new object();
+            var result = await _queryService.QuerySingleAsync<TestModel>(_testSql, parms);
             Assert.Equivalent(result, _person1);
         }
 
@@ -53,6 +54,7 @@ namespace DbService.UnitTests
         public async Task QueryAsyncReturnsListOfItemsForValidCall()
         {
             var expected = new List<TestModel> { _person1, _person2 };
+            var parms = new object();
             _mockConnection.SetupDapperAsync(
                 c => c.QueryAsync<TestModel>(
                     It.IsAny<string>(),
@@ -60,7 +62,7 @@ namespace DbService.UnitTests
                     null,
                     null,
                     null)).ReturnsAsync(expected);
-            var result = await _queryService.QueryAsync<TestModel>(_testSql, new object());
+            var result = await _queryService.QueryAsync<TestModel>(_testSql, parms);
             Assert.Equivalent(result, expected);
         }
 
@@ -68,14 +70,15 @@ namespace DbService.UnitTests
         public async Task ExecuteAsyncReturnsOneForValidCall()
         {
             var expected = 1;
+            var parms = new object();
             _mockConnection.SetupDapperAsync(
                 c => c.ExecuteAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<object>(),
+                    _testSql,
+                    parms,
                     null,
                     null,
                     null)).ReturnsAsync(expected);
-            var result = await _queryService.ExecuteAsync(_testSql, new object());
+            var result = await _queryService.ExecuteAsync(_testSql, parms);
             Assert.Equivalent(result, expected);
         }
     }
