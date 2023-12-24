@@ -1,6 +1,6 @@
 using System.Data;
 using Dapper;
-using DbService.interfaces;
+using DbService.Interfaces;
 
 namespace DbService.Services
 {

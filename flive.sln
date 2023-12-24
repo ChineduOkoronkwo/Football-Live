@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BEBC1F04-57C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbService", "src\Dbservice\DbService.csproj", "{992A3675-8801-4BE6-8A7C-11FD3BCB21F2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5A8B51B6-F136-4F3C-9002-21AABAC6AB39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbService.UnitTests", "tests\DbService.UnitTests\DbService.UnitTests.csproj", "{787217C9-C680-4968-94BA-483F56C04FBE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +24,13 @@ Global
 		{992A3675-8801-4BE6-8A7C-11FD3BCB21F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{992A3675-8801-4BE6-8A7C-11FD3BCB21F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{992A3675-8801-4BE6-8A7C-11FD3BCB21F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{787217C9-C680-4968-94BA-483F56C04FBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{787217C9-C680-4968-94BA-483F56C04FBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{787217C9-C680-4968-94BA-483F56C04FBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{787217C9-C680-4968-94BA-483F56C04FBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{992A3675-8801-4BE6-8A7C-11FD3BCB21F2} = {BEBC1F04-57C8-4E45-ACA9-CCCE2D980C2D}
+		{787217C9-C680-4968-94BA-483F56C04FBE} = {5A8B51B6-F136-4F3C-9002-21AABAC6AB39}
 	EndGlobalSection
 EndGlobal

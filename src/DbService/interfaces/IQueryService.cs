@@ -1,4 +1,4 @@
-namespace DbService.interfaces
+namespace DbService.Interfaces
 {
     public interface IQueryService
     {
