@@ -66,10 +66,11 @@ namespace DbService.UnitTests
             Assert.Equivalent(result, expected);
         }
 
-        [Fact]
-        public async Task ExecuteAsyncReturnsOneForValidCall()
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        public async Task ExecuteAsyncReturnsNumRowsAffectedForValidCall(int expected)
         {
-            var expected = 1;
             var parms = new object();
             _mockConnection.SetupDapperAsync(
                 c => c.ExecuteAsync(
