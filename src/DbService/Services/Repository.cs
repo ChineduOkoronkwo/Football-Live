@@ -1,47 +1,23 @@
-using System.Reflection;
 using DbService.Interfaces;
+using DbService.Utilities;
 
 namespace DbService.Services
 {
     public class Repository<TEntity, TIdEntity> : IRepository<TEntity>
         where TEntity : TIdEntity
     {
-        public virtual string GetSqlCommand
+        private readonly IQueryService _queryService;
+        public Repository(IQueryService queryService)
         {
-            get
-            {
-                var tEntityPropertyNames = GetPropertiesNames(GetTEntityPropertyInfos);
-                var tIdEntityPropertyNames = GetPropertiesNames(GetTIdEntityPropertyInfos);
-                for (int index = 0; index < tIdEntityPropertyNames.Count; index++)
-                {
-                    tIdEntityPropertyNames[index] = $"{tIdEntityPropertyNames[index]} = @{tIdEntityPropertyNames[index]}";
-                }
-
-                return $"SELECT {string.Join(", ", tEntityPropertyNames)} FROM {typeof(TEntity).Name} "
-                    + $"WHERE {string.Join(" AND ", tIdEntityPropertyNames)};";
-            }
+            _queryService = queryService;
         }
 
-        public Task<TEntity> GetAsync<TGetFilter>(TGetFilter? param, bool convertToSqlParm)
+        public virtual string GetSqlCommand => SqlGenerator.GenerateGetSqlCommand(typeof(TEntity), typeof(TIdEntity));
+
+        public Task<TEntity> GetAsync<TGetFilter>(TGetFilter param, bool convertToSqlParm = false)
         {
-            throw new NotImplementedException();
+            object? sqlParm = convertToSqlParm ? null : param;
+            return _queryService.QuerySingleAsync<TEntity>(GetSqlCommand, sqlParm);
         }
-
-        private List<string> GetPropertiesNames(PropertyInfo[] properties)
-        {
-            var result = new List<string>();
-            foreach (var property in properties)
-            {
-                result.Add(property.Name);
-            }
-
-            return result;
-        }
-
-        private PropertyInfo[] GetTEntityPropertyInfos
-            => typeof(TEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-        private PropertyInfo[] GetTIdEntityPropertyInfos
-            => typeof(TIdEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
     }
 }

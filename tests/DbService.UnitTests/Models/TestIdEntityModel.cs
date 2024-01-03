@@ -1,6 +1,6 @@
 namespace DbService.UnitTests.Models
 {
-    public class TestEntityIdModel
+    public class TestIdEntityModel
     {
         public int Id { get; set; }
     }
