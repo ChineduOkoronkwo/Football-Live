@@ -5,13 +5,12 @@ using System.Threading.Tasks;
 
 namespace Dal.Interfaces
 {
-    public interface IGenericRepository<T>
+    public interface IEntitySqlCommand
     {
+        string GetSqlCommand { get; }
+        string ListSqlCommand { get; }
         string CreateSqlCommand { get; }
         string DeleteSqlCommand { get; }
         string UpdateSqlCommand { get; }
-        Task<int> Create(T param)
-        Task<int> Delete<U>(U? param)
-        Task<int> Update(T param)
     }
 }
