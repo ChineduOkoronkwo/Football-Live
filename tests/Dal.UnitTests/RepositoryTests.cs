@@ -1,5 +1,6 @@
 using Dal.Interfaces;
 using Dal.Services;
+using Dal.UnitTests.Entities;
 using Dal.UnitTests.Utils;
 using Moq;
 
@@ -7,26 +8,26 @@ namespace Dal.UnitTests
 {
     public class RepositoryTests : TestUtil
     {
-        private Mock<IDapperService> _dapperService;
-        private Mock<IEntitySqlCommand> _entitySqlCommand;
-        private IRepository _repository;
+        private readonly Mock<IDapperService> _dapperService;
+        private readonly Mock<IEntitySqlCommand> _entitySqlCommand;
+        private readonly IRepository _repository;
 
         public RepositoryTests()
         {
             _dapperService = new Mock<IDapperService>();
             _entitySqlCommand = new Mock<IEntitySqlCommand>();
             _repository = new Repository(_dapperService.Object, _entitySqlCommand.Object);
-            SetupSquelCommand();
         }
 
-        private void SetupSquelCommand()
+        [Fact]
+        public async Task GetAsyncReturnsSingleItem()
         {
-            _entitySqlCommand
-                .SetupProperty(x => x.GetSqlCommand, _getSqlCommand)
-                .SetupProperty(x => x.ListSqlCommand, _listSqlCommand)
-                .SetupProperty(x => x.CreateSqlCommand, _createSqlCommand)
-                .SetupProperty(x => x.UpdateSqlCommand, _updateSqlCommand)
-                .SetupProperty(x => x.DeleteSqlCommand, _deleteSqlCommand);
+            var entityId = new EntityId { Id = 1 };
+            _entitySqlCommand.Setup(s => s.GetSqlCommand).Returns(_getSqlCommand);
+            _dapperService.Setup(d => d.QuerySingleAsync<TestEntity>(_getSqlCommand, entityId)).ReturnsAsync(Person1);
+            var actual = await _repository.GetAsync<TestEntity>(entityId);
+            Assert.Equal(Person1, actual);
+            _dapperService.VerifyAll();
         }
     }
 }

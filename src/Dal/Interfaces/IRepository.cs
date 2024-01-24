@@ -2,10 +2,10 @@ namespace Dal.Interfaces
 {
     public interface IRepository
     {
-        Task<T> Get<T>(object? param);
-        Task<IEnumerable<T>> List<T>(object? param);
-        Task<int> Create(object? param);
-        Task<int> Delete(object? param);
-        Task<int> Update(object? param);
+        Task<T> GetAsync<T>(object? param);
+        Task<IEnumerable<T>> ListAsync<T>(object? param);
+        Task<int> CreateAsync(object? param);
+        Task<int> DeleteAsync(object? param);
+        Task<int> UpdateAsync(object? param);
     }
 }

@@ -1,3 +1,6 @@
+using System.Globalization;
+using Dal.UnitTests.Entities;
+
 namespace Dal.UnitTests.Utils
 {
     public class TestUtil
@@ -7,5 +10,15 @@ namespace Dal.UnitTests.Utils
         protected const string _createSqlCommand = "INSERT INTO TestEntity(Id, FirstName, LastName, DateOfBirth) VALUES(@Id, @FirstName, @LastName, @DateOfBirth);";
         protected const string _updateSqlCommand = "UPDATE TestEntity SET FirstName=@FirstName, LastName=@LastName, DateOfBirth=@DateOfBirth WHERE Id=@Id;";
         protected const string _deleteSqlCommand = "Delete FROM TestEntity WHERE Id=@Id;";
+        protected TestEntity Person1 { get; }
+        public TestUtil()
+        {
+            Person1 = new TestEntity()
+            {
+                FirstName = "Test FirstName",
+                LastName = "Test LastName",
+                DateOfBirth = DateTime.Parse("1957-02-06", new CultureInfo("en-US")),
+            };
+        }
     }
 }
