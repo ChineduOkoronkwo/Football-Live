@@ -29,5 +29,19 @@ namespace Dal.UnitTests
             Assert.Equal(Person1, actual);
             _dapperService.VerifyAll();
         }
+
+        [Fact]
+        public async Task GetAsyncPropagatesException()
+        {
+            var entityId = new EntityId { Id = 1 };
+            var expectedException = new Exception("Test Exception Message");
+            _entitySqlCommand.Setup(s => s.GetSqlCommand).Returns(_getSqlCommand);
+            _dapperService.Setup(d => d.QuerySingleAsync<TestEntity>(_getSqlCommand, entityId)).ThrowsAsync(expectedException);
+
+            async Task Act() => await _repository.GetAsync<TestEntity>(entityId);
+            var actualException = await Assert.ThrowsAsync<Exception>(Act);
+            Assert.Equal(expectedException, actualException);
+            _dapperService.VerifyAll();
+        }
     }
 }
