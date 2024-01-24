@@ -12,6 +12,7 @@ namespace Dal.UnitTests.Utils
         protected const string _deleteSqlCommand = "Delete FROM TestEntity WHERE Id=@Id;";
         protected const string _testExceptionMessage = "Test Exception Message";
         protected TestEntity Person1 { get; }
+        protected List<TestEntity> PersonList { get; }
         public TestUtil()
         {
             Person1 = new TestEntity()
@@ -20,6 +21,17 @@ namespace Dal.UnitTests.Utils
                 LastName = "Test LastName",
                 DateOfBirth = DateTime.Parse("1957-02-06", new CultureInfo("en-US")),
             };
+            PersonList =
+            [
+                Person1,
+                new TestEntity()
+                {
+                    FirstName = "Test FirstName2",
+                    LastName = "Test LastName2",
+                    DateOfBirth = DateTime.Parse("1995-12-25", new CultureInfo("en-US")),
+                }
+
+            ];
         }
     }
 }

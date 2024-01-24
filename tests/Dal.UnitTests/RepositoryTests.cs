@@ -22,10 +22,12 @@ namespace Dal.UnitTests
         [Fact]
         public async Task GetAsyncReturnsSingleItem()
         {
-            var entityId = new EntityId { Id = 1 };
+            var sqlparam = new EntityId { Id = 1 };
             _entitySqlCommand.Setup(s => s.GetSqlCommand).Returns(_getSqlCommand);
-            _dapperService.Setup(d => d.QuerySingleAsync<TestEntity>(_getSqlCommand, entityId)).ReturnsAsync(Person1);
-            var actual = await _repository.GetAsync<TestEntity>(entityId);
+            _dapperService.Setup(d => d.QuerySingleAsync<TestEntity>(_getSqlCommand, sqlparam)).ReturnsAsync(Person1);
+
+            var actual = await _repository.GetAsync<TestEntity>(sqlparam);
+
             Assert.Equal(Person1, actual);
             _dapperService.VerifyAll();
         }
@@ -33,14 +35,32 @@ namespace Dal.UnitTests
         [Fact]
         public async Task GetAsyncPropagatesException()
         {
-            var entityId = new EntityId { Id = 1 };
+            var sqlparam = new EntityId { Id = 1 };
             var expectedException = new Exception(_testExceptionMessage);
             _entitySqlCommand.Setup(s => s.GetSqlCommand).Returns(_getSqlCommand);
-            _dapperService.Setup(d => d.QuerySingleAsync<TestEntity>(_getSqlCommand, entityId)).ThrowsAsync(expectedException);
+            _dapperService.Setup(d => d.QuerySingleAsync<TestEntity>(_getSqlCommand, sqlparam)).ThrowsAsync(expectedException);
 
-            async Task Act() => await _repository.GetAsync<TestEntity>(entityId);
+            async Task Act() => await _repository.GetAsync<TestEntity>(sqlparam);
+
             var actualException = await Assert.ThrowsAsync<Exception>(Act);
             Assert.Equal(expectedException, actualException);
+            _dapperService.VerifyAll();
+        }
+
+        [Fact]
+        public async Task ListAsyncReturnsListOfItems()
+        {
+            var sqlparam = new ListParamEntity
+            {
+                FirstName = "Nativat",
+                Offset = 300,
+            };
+            _entitySqlCommand.Setup(s => s.ListSqlCommand).Returns(_listSqlCommand);
+            _dapperService.Setup(d => d.QueryAsync<TestEntity>(_listSqlCommand, sqlparam)).ReturnsAsync(PersonList);
+
+            var actual = await _repository.ListAsync<TestEntity>(sqlparam);
+
+            Assert.Equal(PersonList, actual);
             _dapperService.VerifyAll();
         }
     }
