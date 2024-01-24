@@ -34,7 +34,7 @@ namespace Dal.UnitTests
         public async Task GetAsyncPropagatesException()
         {
             var entityId = new EntityId { Id = 1 };
-            var expectedException = new Exception("Test Exception Message");
+            var expectedException = new Exception(_testExceptionMessage);
             _entitySqlCommand.Setup(s => s.GetSqlCommand).Returns(_getSqlCommand);
             _dapperService.Setup(d => d.QuerySingleAsync<TestEntity>(_getSqlCommand, entityId)).ThrowsAsync(expectedException);
 
