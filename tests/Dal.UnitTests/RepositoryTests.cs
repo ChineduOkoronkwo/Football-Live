@@ -67,11 +67,7 @@ namespace Dal.UnitTests
         [Fact]
         public async Task ListAsyncPropagatesException()
         {
-            var sqlparam = new ListParamEntity
-            {
-                FirstName = "Nativat",
-                Offset = 300,
-            };
+            var sqlparam = new ListParamEntity { FirstName = "Nativat", Offset = 300, };
             _entitySqlCommand.Setup(s => s.ListSqlCommand).Returns(_listSqlCommand);
             var expectedException = new Exception(_testExceptionMessage);
             _dapperService.Setup(d => d.QueryAsync<TestEntity>(_listSqlCommand, sqlparam)).ThrowsAsync(expectedException);
