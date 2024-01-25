@@ -128,5 +128,32 @@ namespace Dal.UnitTests
 
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public async Task DeleteAsyncReturnsOne()
+        {
+            var expected = 1;
+            var sqlparam = new EntityId { Id = 1 };
+            _entitySqlCommand.Setup(s => s.DeleteSqlCommand).Returns(_deleteSqlCommand);
+            _dapperService.Setup(d => d.ExecuteAsync(_deleteSqlCommand, sqlparam)).ReturnsAsync(expected);
+
+            var actual = await _repository.DeleteAsync(sqlparam);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncPropagatesException()
+        {
+            var expected = new Exception(_testExceptionMessage);
+            var sqlparam = new EntityId { Id = 1 };
+            _entitySqlCommand.Setup(s => s.DeleteSqlCommand).Returns(_deleteSqlCommand);
+            _dapperService.Setup(d => d.ExecuteAsync(_deleteSqlCommand, sqlparam)).ThrowsAsync(expected);
+
+            async Task Act() => await _repository.DeleteAsync(sqlparam);
+            var actual = await Assert.ThrowsAsync<Exception>(Act);
+
+            Assert.Equal(expected, actual);
+        }
     }
 }
