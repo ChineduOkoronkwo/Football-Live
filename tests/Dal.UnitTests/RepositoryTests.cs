@@ -103,5 +103,30 @@ namespace Dal.UnitTests
 
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public async Task UpdateAsyncReturnsOne()
+        {
+            var expected = 1;
+            _entitySqlCommand.Setup(s => s.UpdateSqlCommand).Returns(_updateSqlCommand);
+            _dapperService.Setup(d => d.ExecuteAsync(_updateSqlCommand, Person1)).ReturnsAsync(expected);
+
+            var actual = await _repository.UpdateAsync(Person1);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public async Task UpdateAsyncPropagatesException()
+        {
+            var expected = new Exception(_testExceptionMessage);
+            _entitySqlCommand.Setup(s => s.UpdateSqlCommand).Returns(_updateSqlCommand);
+            _dapperService.Setup(d => d.ExecuteAsync(_updateSqlCommand, Person1)).ThrowsAsync(expected);
+
+            async Task Act() => await _repository.UpdateAsync(Person1);
+            var actual = await Assert.ThrowsAsync<Exception>(Act);
+
+            Assert.Equal(expected, actual);
+        }
     }
 }
