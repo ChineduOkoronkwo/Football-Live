@@ -13,6 +13,7 @@ namespace Dal.UnitTests.Utils
         protected const string _testExceptionMessage = "Test Exception Message";
         protected TestEntity Person1 { get; }
         protected List<TestEntity> PersonList { get; }
+        protected EntityId EntityIdParam { get; }
         public TestUtil()
         {
             Person1 = new TestEntity()
@@ -32,6 +33,7 @@ namespace Dal.UnitTests.Utils
                 }
 
             ];
+            EntityIdParam = new EntityId { Id = 1 };
         }
     }
 }

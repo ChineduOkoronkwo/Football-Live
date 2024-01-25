@@ -22,11 +22,10 @@ namespace Dal.UnitTests
         [Fact]
         public async Task GetAsyncReturnsSingleItem()
         {
-            var sqlparam = new EntityId { Id = 1 };
             _entitySqlCommand.Setup(s => s.GetSqlCommand).Returns(_getSqlCommand);
-            _dapperService.Setup(d => d.QuerySingleAsync<TestEntity>(_getSqlCommand, sqlparam)).ReturnsAsync(Person1);
+            _dapperService.Setup(d => d.QuerySingleAsync<TestEntity>(_getSqlCommand, EntityIdParam)).ReturnsAsync(Person1);
 
-            var actual = await _repository.GetAsync<TestEntity>(sqlparam);
+            var actual = await _repository.GetAsync<TestEntity>(EntityIdParam);
 
             Assert.Equal(Person1, actual);
             _dapperService.VerifyAll();
@@ -35,12 +34,11 @@ namespace Dal.UnitTests
         [Fact]
         public async Task GetAsyncPropagatesException()
         {
-            var sqlparam = new EntityId { Id = 1 };
             var expectedException = new Exception(_testExceptionMessage);
             _entitySqlCommand.Setup(s => s.GetSqlCommand).Returns(_getSqlCommand);
-            _dapperService.Setup(d => d.QuerySingleAsync<TestEntity>(_getSqlCommand, sqlparam)).ThrowsAsync(expectedException);
+            _dapperService.Setup(d => d.QuerySingleAsync<TestEntity>(_getSqlCommand, EntityIdParam)).ThrowsAsync(expectedException);
 
-            async Task Act() => await _repository.GetAsync<TestEntity>(sqlparam);
+            async Task Act() => await _repository.GetAsync<TestEntity>(EntityIdParam);
 
             var actualException = await Assert.ThrowsAsync<Exception>(Act);
             Assert.Equal(expectedException, actualException);
@@ -133,11 +131,10 @@ namespace Dal.UnitTests
         public async Task DeleteAsyncReturnsOne()
         {
             var expected = 1;
-            var sqlparam = new EntityId { Id = 1 };
             _entitySqlCommand.Setup(s => s.DeleteSqlCommand).Returns(_deleteSqlCommand);
-            _dapperService.Setup(d => d.ExecuteAsync(_deleteSqlCommand, sqlparam)).ReturnsAsync(expected);
+            _dapperService.Setup(d => d.ExecuteAsync(_deleteSqlCommand, EntityIdParam)).ReturnsAsync(expected);
 
-            var actual = await _repository.DeleteAsync(sqlparam);
+            var actual = await _repository.DeleteAsync(EntityIdParam);
 
             Assert.Equal(expected, actual);
         }
@@ -146,11 +143,10 @@ namespace Dal.UnitTests
         public async Task DeleteAsyncPropagatesException()
         {
             var expected = new Exception(_testExceptionMessage);
-            var sqlparam = new EntityId { Id = 1 };
             _entitySqlCommand.Setup(s => s.DeleteSqlCommand).Returns(_deleteSqlCommand);
-            _dapperService.Setup(d => d.ExecuteAsync(_deleteSqlCommand, sqlparam)).ThrowsAsync(expected);
+            _dapperService.Setup(d => d.ExecuteAsync(_deleteSqlCommand, EntityIdParam)).ThrowsAsync(expected);
 
-            async Task Act() => await _repository.DeleteAsync(sqlparam);
+            async Task Act() => await _repository.DeleteAsync(EntityIdParam);
             var actual = await Assert.ThrowsAsync<Exception>(Act);
 
             Assert.Equal(expected, actual);
