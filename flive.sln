@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dal", "src\Dal\Dal.csproj",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dal.UnitTests", "tests\Dal.UnitTests\Dal.UnitTests.csproj", "{8DF5502D-B03F-41B0-8CF4-C384543F5089}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dal.AcceptanceTests", "tests\Dal.AcceptanceTests\Dal.AcceptanceTests.csproj", "{8C7E7EB0-ED8F-4B9B-926A-D5C06BCF0FD9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,9 +30,14 @@ Global
 		{8DF5502D-B03F-41B0-8CF4-C384543F5089}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DF5502D-B03F-41B0-8CF4-C384543F5089}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DF5502D-B03F-41B0-8CF4-C384543F5089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C7E7EB0-ED8F-4B9B-926A-D5C06BCF0FD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C7E7EB0-ED8F-4B9B-926A-D5C06BCF0FD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C7E7EB0-ED8F-4B9B-926A-D5C06BCF0FD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C7E7EB0-ED8F-4B9B-926A-D5C06BCF0FD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{745B2669-99CB-4C0F-9878-951683A57DC8} = {BEBC1F04-57C8-4E45-ACA9-CCCE2D980C2D}
 		{8DF5502D-B03F-41B0-8CF4-C384543F5089} = {5A8B51B6-F136-4F3C-9002-21AABAC6AB39}
+		{8C7E7EB0-ED8F-4B9B-926A-D5C06BCF0FD9} = {5A8B51B6-F136-4F3C-9002-21AABAC6AB39}
 	EndGlobalSection
 EndGlobal
