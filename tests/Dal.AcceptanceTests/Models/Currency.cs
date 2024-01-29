@@ -1,6 +1,6 @@
 namespace Dal.AcceptanceTests.Models
 {
-    public class Currency
+    public class Currency : BaseModelId
     {
         public string Code { get; set; } = default!;
         public string Name { get; set; } = default!;

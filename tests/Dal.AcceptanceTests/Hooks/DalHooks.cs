@@ -1,27 +1,15 @@
+using dotenv.net;
 using TechTalk.SpecFlow;
 
 namespace Dal.AcceptanceTests.Hooks
 {
     [Binding]
-    public class DalHooks
+    public static class DalHooks
     {
-        // [BeforeScenario("DbService")]
-
-        // [BeforeTestRun]
-        // public void BeforeTestRun()
-        // {
-        //     // connect to DBMS
-        //     // Create database
-        //     // Create User
-        //     // Grant User privilleges
-        //     // Connect to database
-        //     // Create Tables
-        // }
-
-        // [AfterTestRun]
-        // public void AfterTestRun()
-        // {
-        //     // Drop database
-        // }
+        [BeforeTestRun]
+        public static void BeforeTestRun()
+        {
+            DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false, probeForEnv: true, probeLevelsToSearch: 4));
+        }
     }
 }
