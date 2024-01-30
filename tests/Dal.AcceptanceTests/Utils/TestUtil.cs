@@ -9,6 +9,7 @@ namespace Dal.AcceptanceTests.Utils
     public static class TestUtil
     {
         public static string PgSqlDbType => "pgsql";
+        public static string TestBankDB => "testbankdb";
 
         private static IDbConnection GetDbConnection(string rdbmsType, string dbName)
         {
@@ -25,8 +26,12 @@ namespace Dal.AcceptanceTests.Utils
 
         public static IRepository GetCurrencyRepository(string rdbmsType, string dbName)
         {
-            var dapperService = new DapperService(GetDbConnection(rdbmsType, dbName));
-            return new Repository(dapperService, new CurrencyEntitySql());
+            return new Repository(CreateDapperService(rdbmsType, dbName), new CurrencyEntitySql());
+        }
+
+        public static IDapperService CreateDapperService(string rdbmsType, string dbName)
+        {
+            return new DapperService(GetDbConnection(rdbmsType, dbName));
         }
     }
 }
