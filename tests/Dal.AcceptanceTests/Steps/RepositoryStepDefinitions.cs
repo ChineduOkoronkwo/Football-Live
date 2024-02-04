@@ -23,17 +23,10 @@ namespace Dal.AcceptanceTests.Steps
             var rdbmsType = (string)scenarioContext["rdbmsType"];
             var dbName = (string)scenarioContext["dbName"];
             var customerRepo = TestUtil.GetCustomerRepository(rdbmsType, dbName);
+            var customers = TestUtil.GetCustomersFromTable(table);
 
-            foreach (var row in table.Rows)
+            foreach (var customer in customers)
             {
-                var customer = new Customer
-                {
-                    Id = int.Parse(row["Id"]),
-                    FirstName = row["FirstName"],
-                    LastName = row["LastName"],
-                    Middlename = row["MiddleName"],
-                    DateOfBirth = DateTime.Parse(row["DateOfBirth"], new CultureInfo("en-US"))
-                };
                 await customerRepo.CreateAsync(customer);
             }
 
@@ -46,17 +39,10 @@ namespace Dal.AcceptanceTests.Steps
             var rdbmsType = (string)scenarioContext["rdbmsType"];
             var dbName = (string)scenarioContext["dbName"];
             var accountRepo = TestUtil.GetAccountRepository(rdbmsType, dbName);
+            var accounts = TestUtil.GetAccountFromTable(table);
 
-            foreach (var row in table.Rows)
+            foreach (var account in accounts)
             {
-                var account = new Account
-                {
-                    Id = int.Parse(row["Id"]),
-                    CurrencyId = int.Parse(row["CurrencyId"]),
-                    AccountTypeId = int.Parse(row["AccountTypeId"]),
-                    CustomerId = int.Parse(row["CustomerId"]),
-                    Balance = int.Parse(row["Balance"]),
-                };
                 await accountRepo.CreateAsync(account);
             }
 
