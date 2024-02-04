@@ -65,15 +65,6 @@ namespace Dal.AcceptanceTests.Steps
             scenarioContext["customerrecords"] = records;
         }
 
-        [Then("I can verify that there are (.*) customer records which matches the following")]
-        public void ThenICanVerifyCustomerRecords(int numRecords, Table table)
-        {
-            var expectedCustomers = TestUtil.GetCustomersFromTable(table);
-            var actualCustomers = (List<Customer>)scenarioContext["customerrecords"];
-            actualCustomers.Count.Should().Be(numRecords);
-            actualCustomers.Should().BeEquivalentTo(expectedCustomers);
-        }
-
         [When("I use ListAsync on account repo to read (.*) records starting from record (.*)")]
         public async Task WhenIUseListAsyncOnAccountRepo(int pageSize, int pageOffset)
         {
@@ -83,13 +74,43 @@ namespace Dal.AcceptanceTests.Steps
             scenarioContext["accountrecords"] = records;
         }
 
+        [Then("I can verify that there are (.*) customer records which matches the following")]
+        public void ThenICanVerifyCustomerRecords(int numRecords, Table table)
+        {
+            var expectedCustomers = TestUtil.GetCustomersFromTable(table);
+            var actualCustomers = (List<Customer>)scenarioContext["customerrecords"];
+            actualCustomers.Count.Should().Be(numRecords);
+
+            var map = new Dictionary<int, Customer>();
+            foreach (var customer in expectedCustomers)
+            {
+                map[customer.Id] = customer;
+            }
+
+            foreach (var customer in actualCustomers)
+            {
+                Assert.That(map.ContainsKey(customer.Id), Is.True);
+                map[customer.Id].Should().BeEquivalentTo(customer);
+            }
+        }
+
         [Then("I can verify that there are (.*) account records which matches the following")]
         public void ThenICanVerifyAccountRecords(int numRecords, Table table)
         {
             var expected = TestUtil.GetAccountFromTable(table);
             var actual = (List<Account>)scenarioContext["accountrecords"];
             actual.Count.Should().Be(numRecords);
-            expected.Should().BeEquivalentTo(expected);
+            var map = new Dictionary<int, Account>();
+            foreach (var account in expected)
+            {
+                map[account.Id] = account;
+            }
+
+            foreach (var account in actual)
+            {
+                Assert.That(map.ContainsKey(account.Id), Is.True);
+                map[account.Id].Should().BeEquivalentTo(account);
+            }
         }
     }
 }

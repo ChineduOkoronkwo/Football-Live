@@ -88,6 +88,8 @@ namespace Dal.AcceptanceTests.Utils
                     AccountTypeId = int.Parse(row["AccountTypeId"]),
                     CustomerId = int.Parse(row["CustomerId"]),
                     Balance = int.Parse(row["Balance"]),
+                    Name = row["Name"],
+                    Description = row["Description"]
                 };
                 accounts.Add(account);
             }
