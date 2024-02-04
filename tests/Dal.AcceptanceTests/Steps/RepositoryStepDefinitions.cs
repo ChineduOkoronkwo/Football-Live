@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Globalization;
 using Dal.AcceptanceTests.Models;
 using Dal.AcceptanceTests.Utils;
@@ -47,6 +48,12 @@ namespace Dal.AcceptanceTests.Steps
             }
 
             scenarioContext["accountrepo"] = accountRepo;
+        }
+
+        [Given("The ListSqlCommand of (.*) is set to order records by (.*)")]
+        public void GivenTheListSqlCommandHasOrderBy(string entitySql, string orderby)
+        {
+            scenarioContext[$"{entitySql}orderby"] = orderby;
         }
 
         [When("I use ListAsync on customer repo to read (.*) records starting from record (.*)")]
