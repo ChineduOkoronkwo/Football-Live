@@ -1,5 +1,3 @@
-using System.ComponentModel;
-using System.Globalization;
 using Dal.AcceptanceTests.Models;
 using Dal.AcceptanceTests.Utils;
 using Dal.Interfaces;
@@ -74,6 +72,18 @@ namespace Dal.AcceptanceTests.Steps
             scenarioContext["accountrecords"] = records;
         }
 
+        [When("I update the MiddleName to (.*) and FirstName to (.*) for Customer (.*)")]
+        public async Task UpdateMiddleAndFirstName(string middlename, string firstName, int id)
+        {
+            var param = new BaseModelId { Id = id };
+            var customerRepo = (IRepository)scenarioContext["customerrepo"];
+            var customer = await customerRepo.GetAsync<Customer>(param);
+            customer.FirstName = firstName;
+            customer.Middlename = middlename;
+            var numRecords = await customerRepo.UpdateAsync(customer);
+            numRecords.Should().Be(1);
+        }
+
         [Then("I can verify that there are (.*) customer records which matches the following")]
         public void ThenICanVerifyCustomerRecords(int numRecords, Table table)
         {
@@ -111,6 +121,18 @@ namespace Dal.AcceptanceTests.Steps
                 Assert.That(map.ContainsKey(account.Id), Is.True);
                 map[account.Id].Should().BeEquivalentTo(account);
             }
+        }
+
+        [Then("I can verify that the changes to customer (.*) are persisted")]
+        public async Task ThenICanVerifyChangesToCustomer(int id, Table table)
+        {
+            var expectedCustomer = TestUtil.GetCustomersFromTable(table);
+            expectedCustomer.Count.Should().Be(1);
+
+            var param = new BaseModelId { Id = id };
+            var customerRepo = (IRepository)scenarioContext["customerrepo"];
+            var actualCustomer = await customerRepo.GetAsync<Customer>(param);
+            actualCustomer.Should().BeEquivalentTo(expectedCustomer[0]);
         }
     }
 }

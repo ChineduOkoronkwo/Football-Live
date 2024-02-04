@@ -1,6 +1,6 @@
 Feature: Repository
 
-Background: CreateAsync with Customer and Account Repositories
+Background: Use CreateAsync to create customer and account records
     Given the testbankdb database is hosted on a pgsql rdbms
 
     And the following customers
@@ -18,6 +18,7 @@ Background: CreateAsync with Customer and Account Repositories
     | 201006 | Alex R        | Current account | 3          | 3             | 67890      | 0       |
     | 201008 | Grace         | Current account | 3          | 3             | 13579      | 0       |
     | 201010 | Grace         | Current account | 1          | 3             | 13579      | 0       |
+
 
 Scenario: Use ListAsync to read paginated customer and account records
     Given The ListSqlCommand of CustomerEntitySql is set to order records by LastName, FirstName
@@ -72,3 +73,10 @@ Scenario: Use ListAsync to read paginated customer and account records
 
     | Id     | Name          | Description     | CurrencyId | AccountTypeId | CustomerId | Balance |
     | 201008 | Grace         | Current account | 3          | 3             | 13579      | 0       |
+
+
+Scenario: Use UpdateAsync to update customer and account record and GetAsync to verify the updates
+    When I update the MiddleName to Marrine and FirstName to Whitney for Customer 12345 
+    Then I can verify that the changes to customer 12345 are persisted
+    | Id     | FirstName | LastName | MiddleName | DateOfBirth |
+    | 12345	 | Whitney	 | Johnson	| Marrine	 | 1985-07-12  |
