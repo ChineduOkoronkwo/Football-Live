@@ -18,7 +18,7 @@ namespace Dal.AcceptanceTests.Utils
             var connectionString = "";
             if (rdbmsType == PgSqlDbType)
             {
-                connectionString = $"Server=localhost; Port=5432; User Id={username}; Password={pswd}; Database={dbName}";
+                connectionString = $"Server=localhost; Port=5432; User Id={username}; Password={pswd}; Database={dbName}; Pooling=true; Include Error Detail=true";
             }
 
             return new NpgsqlConnection(connectionString);
@@ -29,9 +29,29 @@ namespace Dal.AcceptanceTests.Utils
             return new Repository(CreateDapperService(rdbmsType, dbName), new CurrencyEntitySql());
         }
 
+        public static IRepository GetAccountTypeRepository(string rdbmsType, string dbName)
+        {
+            return new Repository(CreateDapperService(rdbmsType, dbName), new AccountTypeEntitySql());
+        }
+
+        public static IRepository GetTransactionTypeRepository(string rdbmsType, string dbName)
+        {
+            return new Repository(CreateDapperService(rdbmsType, dbName), new TransactionTypeEntitySql());
+        }
+
         public static IDapperService CreateDapperService(string rdbmsType, string dbName)
         {
             return new DapperService(GetDbConnection(rdbmsType, dbName));
+        }
+
+        public static IRepository GetCustomerRepository(string rdbmsType, string dbName)
+        {
+            return new Repository(CreateDapperService(rdbmsType, dbName), new CustomerEntitySql());
+        }
+
+        public static IRepository GetAccountRepository(string rdbmsType, string dbName)
+        {
+            return new Repository(CreateDapperService(rdbmsType, dbName), new AccountEntitySql());
         }
     }
 }
