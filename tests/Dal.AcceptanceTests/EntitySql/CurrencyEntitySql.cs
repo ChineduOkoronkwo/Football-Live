@@ -7,7 +7,7 @@ namespace Dal.AcceptanceTests.EntitySql
         public string GetSqlCommand => "SELECT Id, Code, Name, Territory FROM Currency WHERE Id = @Id;";
 
         public string ListSqlCommand
-            => "SELECT Id, Code, Name, Territory FROM Currency ORDER BY Name Limit @PageSize OFFSET @Offset;";
+            => "SELECT Id, Code, Name, Territory FROM Currency ORDER BY Name LIMIT @PageSize OFFSET @PageOffset;";
 
         public string CreateSqlCommand
             => "INSERT INTO Currency(Id, Code, Name, Territory) VALUES(@Id, @Code, @Name, @Territory);";

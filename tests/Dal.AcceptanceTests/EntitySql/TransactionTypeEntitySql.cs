@@ -7,7 +7,7 @@ namespace Dal.AcceptanceTests.EntitySql
         public string GetSqlCommand => "SELECT Id, Name, Description FROM TransactionType WHERE Id = @Id;";
 
         public string ListSqlCommand
-            => "SELECT Id, Name, Description FROM TransactionType ORDER BY Name Limit @PageSize OFFSET @Offset;";
+            => "SELECT Id, Name, Description FROM TransactionType ORDER BY Name LIMIT @PageSize OFFSET @PageOffset;";
 
         public string CreateSqlCommand
             => "INSERT INTO TransactionType(Id, Name, Description) VALUES(@Id, @Name, @Description);";

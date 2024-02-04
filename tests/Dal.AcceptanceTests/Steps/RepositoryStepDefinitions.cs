@@ -36,6 +36,8 @@ namespace Dal.AcceptanceTests.Steps
                 };
                 await customerRepo.CreateAsync(customer);
             }
+
+            scenarioContext["customerrepo"] = customerRepo;
         }
 
         [Given("their corresponding accounts")]
@@ -57,32 +59,44 @@ namespace Dal.AcceptanceTests.Steps
                 };
                 await accountRepo.CreateAsync(account);
             }
+
+            scenarioContext["accountrepo"] = accountRepo;
         }
 
-        [Given("the currency repository with the connection to the (.*) (.*) database")]
-        public void GivenDataRepoAndConnectionToDatabase(string rdbmsType, string dbName)
+        [When("I use ListAsync on customer repo to read (.*) records starting from record (.*)")]
+        public async Task WhenIUseListAsyncOnCustomerRepo(int pageSize, int pageOffset)
         {
-            scenarioContext["currency"] = TestUtil.GetCurrencyRepository(rdbmsType, dbName);
+            var paginationDto = new PaginationDto { PageSize = pageSize, PageOffset = pageOffset };
+            var dataRepo = (IRepository)scenarioContext["customerrepo"];
+            var records = await dataRepo.ListAsync<Customer>(paginationDto);
+            scenarioContext["customerrecords"] = records;
         }
 
-        [When("I use CreateAsync to create currency with (.*), (.*), (.*), (.*)")]
-        public async Task WhenIUseCurrencyRepositoryCreateAsync(int id, string code, string name, string territory)
+        [Then("I can verify that there are (.*) customer records which matches the following")]
+        public void ThenICanVerifyCustomerRecords(int numRecords, Table table)
         {
-            var currency = new Currency { Id = id, Code = code, Name = name, Territory = territory };
-            var repo = (IRepository)scenarioContext["currency"];
-            var result = await repo.CreateAsync(currency);
-            scenarioContext[$"currency{id}"] = currency;
-            result.Should().Be(1);
+            var expectedCustomers = TestUtil.GetCustomersFromTable(table);
+            var actualCustomers = (List<Customer>)scenarioContext["customerrecords"];
+            actualCustomers.Count.Should().Be(numRecords);
+            actualCustomers.Should().BeEquivalentTo(expectedCustomers);
         }
 
-        [Then("I can use GetAsync to fetch the currency with the (.*)")]
-        public async Task ThenIcanUseGetAsyncToFetchTheCurrency(int id)
+        [When("I use ListAsync on account repo to read (.*) records starting from record (.*)")]
+        public async Task WhenIUseListAsyncOnAccountRepo(int pageSize, int pageOffset)
         {
-            var param = new BaseModelId { Id = id };
-            var repo = (IRepository)scenarioContext["currency"];
-            var actual = await repo.GetAsync<Currency>(param);
-            var expected = (Currency)scenarioContext[$"currency{id}"];
-            actual.Should().BeEquivalentTo(expected);
+            var paginationDto = new PaginationDto { PageSize = pageSize, PageOffset = pageOffset };
+            var dataRepo = (IRepository)scenarioContext["accountrepo"];
+            var records = await dataRepo.ListAsync<Account>(paginationDto);
+            scenarioContext["accountrecords"] = records;
+        }
+
+        [Then("I can verify that there are (.*) account records which matches the following")]
+        public void ThenICanVerifyAccountRecords(int numRecords, Table table)
+        {
+            var expected = TestUtil.GetAccountFromTable(table);
+            var actual = (List<Account>)scenarioContext["accountrecords"];
+            actual.Count.Should().Be(numRecords);
+            expected.Should().BeEquivalentTo(expected);
         }
     }
 }

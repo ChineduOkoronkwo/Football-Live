@@ -7,7 +7,7 @@ namespace Dal.AcceptanceTests.EntitySql
         public string GetSqlCommand => "SELECT Id, CurrencyId, AccountTypeId, CustomerId, Balance FROM Account WHERE Id = @Id;";
 
         public string ListSqlCommand => "SELECT Id, CurrencyId, AccountTypeId, CustomerId, Balance FROM Account"
-            + " ORDER BY CurrencyId Limit @PageSize OFFSET @Offset;";
+            + " ORDER BY CurrencyId LIMIT @PageSize OFFSET @PageOffset;";
 
         public string CreateSqlCommand => "INSERT INTO Account(Id, CurrencyId, AccountTypeId, CustomerId, Balance)"
             + " VALUES(@Id, @CurrencyId, @AccountTypeId, @CustomerId, @Balance);";

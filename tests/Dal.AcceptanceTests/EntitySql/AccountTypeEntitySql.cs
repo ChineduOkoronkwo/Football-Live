@@ -7,7 +7,7 @@ namespace Dal.AcceptanceTests.EntitySql
         public string GetSqlCommand => "SELECT Id, Name, Description FROM AccountType WHERE Id = @Id;";
 
         public string ListSqlCommand
-            => "SELECT Id, Name, Description FROM AccountType ORDER BY Name Limit @PageSize OFFSET @Offset;";
+            => "SELECT Id, Name, Description FROM AccountType ORDER BY Name LIMIT @PageSize OFFSET @PageOffset;";
 
         public string CreateSqlCommand
             => "INSERT INTO AccountType(Id, Name, Description) VALUES(@Id, @Name, @Description);";

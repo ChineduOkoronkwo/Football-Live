@@ -7,7 +7,7 @@ namespace Dal.AcceptanceTests.EntitySql
         public string GetSqlCommand => "SELECT Id, FirstName, LastName, MiddleName, DateOfBirth FROM Customer WHERE Id = @Id;";
 
         public string ListSqlCommand => "SELECT Id, FirstName, LastName, MiddleName, DateOfBirth FROM Customer"
-            + " ORDER BY LastName, FirstName Limit @PageSize OFFSET @Offset;";
+            + " ORDER BY LastName, FirstName LIMIT @PageSize OFFSET @PageOffset;";
 
         public string CreateSqlCommand => "INSERT INTO Customer(Id, FirstName, LastName, MiddleName, DateOfBirth)"
             + " VALUES(@Id, @FirstName, @LastName, @MiddleName, @DateOfBirth);";
