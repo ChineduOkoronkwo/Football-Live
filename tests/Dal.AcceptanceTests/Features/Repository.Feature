@@ -80,3 +80,13 @@ Scenario: Use UpdateAsync to update customer and account record and GetAsync to 
     Then I can verify that the changes to customer 12345 are persisted
     | Id     | FirstName | LastName | MiddleName | DateOfBirth |
     | 12345	 | Whitney	 | Johnson	| Marrine	 | 1985-07-12  |
+
+
+Scenario: Use DeleteAsync to delete account record
+    When I delete account <Id> using DeleteAsync
+    Then I can verify that account <Id> no longer exist
+    Examples:
+    | Id     |
+    | 101001 |
+    | 201006 |
+    | 201008 |

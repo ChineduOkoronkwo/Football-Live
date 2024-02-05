@@ -84,6 +84,15 @@ namespace Dal.AcceptanceTests.Steps
             numRecords.Should().Be(1);
         }
 
+        [When("I delete account (.*) using DeleteAsync")]
+        public async Task WhenIDeleteaccount(int id)
+        {
+            var param = new BaseModelId { Id = id };
+            var accountRepo = (IRepository)scenarioContext["accountrepo"];
+            var numRecords = await accountRepo.DeleteAsync(param);
+            numRecords.Should().Be(1);
+        }
+
         [Then("I can verify that there are (.*) customer records which matches the following")]
         public void ThenICanVerifyCustomerRecords(int numRecords, Table table)
         {
@@ -133,6 +142,21 @@ namespace Dal.AcceptanceTests.Steps
             var customerRepo = (IRepository)scenarioContext["customerrepo"];
             var actualCustomer = await customerRepo.GetAsync<Customer>(param);
             actualCustomer.Should().BeEquivalentTo(expectedCustomer[0]);
+        }
+
+        [Then("I can verify that account (.*) no longer exist")]
+        public async Task ThenICanVerifyTheAccountNoLongerExist(int id)
+        {
+            var param = new BaseModelId { Id = id };
+            var accountRepo = (IRepository)scenarioContext["accountrepo"];
+            try
+            {
+                await accountRepo.GetAsync<Account>(param);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Assert.That(ex.Message, Is.EqualTo("Sequence contains no elements"));
+            }
         }
     }
 }
