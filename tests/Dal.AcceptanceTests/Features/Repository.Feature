@@ -94,7 +94,10 @@ Scenario: Use DeleteAsync to delete account record
 Scenario: Deleting customer that has existing account fails
     When I delete customer <Id> that also has an account using DeleteAsync
     Then I can verify the customer deletion throws an exception with <Message>
-    And Customer <Id> was not deleted
+    And The customer record still exist
+    | Id     | FirstName | LastName | MiddleName | DateOfBirth |
+    | 12345	 | Emily	 | Johnson	| Marie	     | 1985-07-12  |
+
     Examples:
     | Id    | Message                                                                                                                  |
     | 12345 | 23503: update or delete on table "customer" violates foreign key constraint "account_customerid_fkey" on table "account" |

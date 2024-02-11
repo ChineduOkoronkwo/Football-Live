@@ -182,13 +182,14 @@ namespace Dal.AcceptanceTests.Steps
             Assert.That(actualExMsg, Does.StartWith(msg));
         }
 
-        [Then("Customer (.*) was not deleted")]
-        public async Task ThenCustomerWasNotDeleted(int id)
+        [Then("The customer record still exist")]
+        public async Task ThenCustomerWasNotDeleted(Table table)
         {
-            var param = new BaseModelId { Id = id };
+            var expectedCustomer = TestUtil.GetCustomersFromTable(table)[0];
+            var param = new BaseModelId { Id = expectedCustomer.Id };
             var customerRepo = (IRepository)scenarioContext["customerrepo"];
-            var customer = await customerRepo.GetAsync<Customer>(param);
-            customer.Id.Should().Be(id);
+            var actualCustomer = await customerRepo.GetAsync<Customer>(param);
+            actualCustomer.Should().BeEquivalentTo(expectedCustomer);
         }
     }
 }
