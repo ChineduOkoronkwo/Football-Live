@@ -90,3 +90,14 @@ Scenario: Use DeleteAsync to delete account record
     | 101001 |
     | 201006 |
     | 201008 |
+
+Scenario: Deleting customer that has existing account fails
+    When I delete customer <Id> that also has an account using DeleteAsync
+    Then I can verify the customer deletion throws an exception with <Message>
+    And Customer <Id> was not deleted
+    Examples:
+    | Id    | Message                                                                                                                  |
+    | 12345 | 23503: update or delete on table "customer" violates foreign key constraint "account_customerid_fkey" on table "account" |
+
+Scenario: Deleting account then customer in a transaction
+Scenario: Deleting customer before account in a transaction fails

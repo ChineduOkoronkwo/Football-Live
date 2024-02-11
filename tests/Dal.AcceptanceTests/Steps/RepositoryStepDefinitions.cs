@@ -2,6 +2,7 @@ using Dal.AcceptanceTests.Models;
 using Dal.AcceptanceTests.Utils;
 using Dal.Interfaces;
 using FluentAssertions;
+using Npgsql;
 using TechTalk.SpecFlow;
 
 namespace Dal.AcceptanceTests.Steps
@@ -93,6 +94,21 @@ namespace Dal.AcceptanceTests.Steps
             numRecords.Should().Be(1);
         }
 
+        [When("I delete customer (.*) that also has an account using DeleteAsync")]
+        public async Task WhenIdeleteCustomer(int id)
+        {
+            var param = new BaseModelId { Id = id };
+            var customerRepo = (IRepository)scenarioContext["customerrepo"];
+            try
+            {
+                await customerRepo.DeleteAsync(param);
+            }
+            catch (PostgresException ex)
+            {
+                scenarioContext["customerdelexmsg"] = ex.Message;
+            }
+        }
+
         [Then("I can verify that there are (.*) customer records which matches the following")]
         public void ThenICanVerifyCustomerRecords(int numRecords, Table table)
         {
@@ -157,6 +173,22 @@ namespace Dal.AcceptanceTests.Steps
             {
                 Assert.That(ex.Message, Is.EqualTo("Sequence contains no elements"));
             }
+        }
+
+        [Then("I can verify the customer deletion throws an exception with (.*)")]
+        public void ThenICanVerifyCustomerDeletionException(string msg)
+        {
+            var actualExMsg = (string)scenarioContext["customerdelexmsg"];
+            Assert.That(actualExMsg, Does.StartWith(msg));
+        }
+
+        [Then("Customer (.*) was not deleted")]
+        public async Task ThenCustomerWasNotDeleted(int id)
+        {
+            var param = new BaseModelId { Id = id };
+            var customerRepo = (IRepository)scenarioContext["customerrepo"];
+            var customer = await customerRepo.GetAsync<Customer>(param);
+            customer.Id.Should().Be(id);
         }
     }
 }

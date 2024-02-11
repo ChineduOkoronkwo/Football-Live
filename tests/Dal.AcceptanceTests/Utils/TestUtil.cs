@@ -21,7 +21,7 @@ namespace Dal.AcceptanceTests.Utils
             var connectionString = "";
             if (rdbmsType == PgSqlDbType)
             {
-                connectionString = $"Server=localhost; Port=5432; User Id={username}; Password={pswd}; Database={dbName}; Pooling=true; Include Error Detail=true";
+                connectionString = $"Server=localhost; Port=5432; User Id={username}; Password={pswd}; Database={dbName}; Pooling=true; Include Error Detail=false";
             }
 
             return new NpgsqlConnection(connectionString);
