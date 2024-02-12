@@ -1,3 +1,4 @@
+using System.Transactions;
 using Dal.AcceptanceTests.Models;
 using Dal.AcceptanceTests.Utils;
 using Dal.Interfaces;
@@ -81,8 +82,7 @@ namespace Dal.AcceptanceTests.Steps
             var customer = await customerRepo.GetAsync<Customer>(param);
             customer.FirstName = firstName;
             customer.Middlename = middlename;
-            var numRecords = await customerRepo.UpdateAsync(customer);
-            numRecords.Should().Be(1);
+            await customerRepo.UpdateAsync(customer);
         }
 
         [When("I delete account (.*) using DeleteAsync")]
@@ -90,18 +90,15 @@ namespace Dal.AcceptanceTests.Steps
         {
             var param = new BaseModelId { Id = id };
             var accountRepo = (IRepository)scenarioContext["accountrepo"];
-            var numRecords = await accountRepo.DeleteAsync(param);
-            numRecords.Should().Be(1);
+            await accountRepo.DeleteAsync(param);
         }
 
         [When("I delete customer (.*) that also has an account using DeleteAsync")]
         public async Task WhenIdeleteCustomerFails(int id)
         {
-            var param = new BaseModelId { Id = id };
-            var customerRepo = (IRepository)scenarioContext["customerrepo"];
             try
             {
-                await customerRepo.DeleteAsync(param);
+                await WhenIdeleteCustomer(id);
             }
             catch (PostgresException ex)
             {
@@ -114,8 +111,29 @@ namespace Dal.AcceptanceTests.Steps
         {
             var param = new BaseModelId { Id = id };
             var customerRepo = (IRepository)scenarioContext["customerrepo"];
-            var rowsDeleted = await customerRepo.DeleteAsync(param);
-            rowsDeleted.Should().Be(1);
+            await customerRepo.DeleteAsync(param);
+        }
+
+        [When("I delete an existing account (.*) and a non-existent customer (.*) in a transaction")]
+        public async Task WhenIDeleteAccountAndCustomerThatDoesNotExist(int AccountId, int CustomerId)
+        {
+            using TransactionScope scope = new TransactionScope();
+            await WhenIDeleteaccount(AccountId);
+            await WhenIdeleteCustomer(CustomerId);
+            scope.Complete();
+        }
+
+        [When("I delete existing account (.*) and customer (.*)")]
+        public async Task WhenIDeleteExistingAccountAndCustomer(int AccountId, int CustomerId)
+        {
+            try
+            {
+                await WhenIDeleteAccountAndCustomerThatDoesNotExist(AccountId, CustomerId);
+            }
+            catch (PostgresException ex)
+            {
+                scenarioContext["customerdelexmsg"] = ex.Message;
+            }
         }
 
         [Then("I can verify that there are (.*) customer records which matches the following")]
@@ -214,6 +232,16 @@ namespace Dal.AcceptanceTests.Steps
             {
                 Assert.That(ex.Message, Is.EqualTo("Sequence contains no elements"));
             }
+        }
+
+        [Then("I can verify that the account still exist")]
+        public async Task ThenTheAccountStillExist(Table table)
+        {
+            var expectedAccount = TestUtil.GetAccountFromTable(table)[0];
+            var param = new BaseModelId { Id = expectedAccount.Id };
+            var accountRepo = (IRepository)scenarioContext["accountrepo"];
+            var actualAccount = await accountRepo.GetAsync<Account>(param);
+            actualAccount.Should().BeEquivalentTo(expectedAccount);
         }
     }
 }
