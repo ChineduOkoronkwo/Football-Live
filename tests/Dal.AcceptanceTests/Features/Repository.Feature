@@ -91,6 +91,7 @@ Scenario: Use DeleteAsync to delete account record
     | 201006 |
     | 201008 |
 
+
 Scenario: Deleting customer that has existing account
     When I delete customer <Id> that also has an account using DeleteAsync
     Then I can verify the customer deletion throws an exception with <Message>
@@ -102,6 +103,7 @@ Scenario: Deleting customer that has existing account
     | Id    | Message                                                                                                                  |
     | 12345 | 23503: update or delete on table "customer" violates foreign key constraint "account_customerid_fkey" on table "account" |
 
+
 Scenario: Deleting all customer accounts before deleting the customer
     When I delete account <AccountId> using DeleteAsync
     And I Delete the cutomer <CustomerId> that owns the account
@@ -111,6 +113,7 @@ Scenario: Deleting all customer accounts before deleting the customer
     | AccountId | CustomerId |
     | 201006    | 67890      |
 
+
 Scenario: Deleting existing customer accounts before deleting the customer in a transaction
     When I delete existing account <AccountId> and customer <CustomerId>
     Then I can verify that account <AccountId> no longer exist
@@ -118,6 +121,7 @@ Scenario: Deleting existing customer accounts before deleting the customer in a 
     Examples:
     | AccountId | CustomerId |
     | 201006    | 67890      |
+
 
 Scenario: Deleting customer and one of its accounts in a transaction
     When I delete existing account <AccountId> and customer <CustomerId>
