@@ -95,7 +95,7 @@ namespace Dal.AcceptanceTests.Steps
         }
 
         [When("I delete customer (.*) that also has an account using DeleteAsync")]
-        public async Task WhenIdeleteCustomer(int id)
+        public async Task WhenIdeleteCustomerFails(int id)
         {
             var param = new BaseModelId { Id = id };
             var customerRepo = (IRepository)scenarioContext["customerrepo"];
@@ -107,6 +107,15 @@ namespace Dal.AcceptanceTests.Steps
             {
                 scenarioContext["customerdelexmsg"] = ex.Message;
             }
+        }
+
+        [When("I Delete the cutomer (.*) that owns the account")]
+        public async Task WhenIdeleteCustomer(int id)
+        {
+            var param = new BaseModelId { Id = id };
+            var customerRepo = (IRepository)scenarioContext["customerrepo"];
+            var rowsDeleted = await customerRepo.DeleteAsync(param);
+            rowsDeleted.Should().Be(1);
         }
 
         [Then("I can verify that there are (.*) customer records which matches the following")]
@@ -190,6 +199,21 @@ namespace Dal.AcceptanceTests.Steps
             var customerRepo = (IRepository)scenarioContext["customerrepo"];
             var actualCustomer = await customerRepo.GetAsync<Customer>(param);
             actualCustomer.Should().BeEquivalentTo(expectedCustomer);
+        }
+
+        [Then("I can verify that customer (.*) no longer exist")]
+        public async Task ThenICanVerifyTheCustomerNoLongerExist(int id)
+        {
+            var param = new BaseModelId { Id = id };
+            var customerRepo = (IRepository)scenarioContext["customerrepo"];
+            try
+            {
+                await customerRepo.GetAsync<Account>(param);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Assert.That(ex.Message, Is.EqualTo("Sequence contains no elements"));
+            }
         }
     }
 }

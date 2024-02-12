@@ -102,5 +102,11 @@ Scenario: Deleting customer that has existing account fails
     | Id    | Message                                                                                                                  |
     | 12345 | 23503: update or delete on table "customer" violates foreign key constraint "account_customerid_fkey" on table "account" |
 
-Scenario: Deleting account then customer in a transaction
-Scenario: Deleting customer before account in a transaction fails
+Scenario: Deleting all customer accounts before deleting the customer succeeds
+When I delete account <AccountId> using DeleteAsync
+And I Delete the cutomer <CustomerId> that owns the account
+Then I can verify that account <AccountId> no longer exist
+And I can verify that customer  <CustomerId> no longer exist
+Examples:
+| AccountId | CustomerId |
+| 201006    | 67890      |
