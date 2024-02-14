@@ -56,6 +56,13 @@ namespace Dal.AcceptanceTests.Steps
             scenarioContext[$"{entitySql}orderby"] = orderby;
         }
 
+        [Given("customer (.*) has (.*) account which is (.*)")]
+        [Given("customer (.*) has (.*) accounts which include (.*)")]
+        public void CustomerHasNumAccount(int customerId, int numAccount, int accountId)
+        {
+            // TO-DO: Implement step
+        }
+
         [When("I use ListAsync on customer repo to read (.*) records starting from record (.*)")]
         public async Task WhenIUseListAsyncOnCustomerRepo(int pageSize, int pageOffset)
         {
@@ -114,7 +121,8 @@ namespace Dal.AcceptanceTests.Steps
             await customerRepo.DeleteAsync(param);
         }
 
-        [When("I delete existing account (.*) and customer (.*)")]
+        // [When("I delete existing account (.*) and customer (.*)")]
+        [When("I delete the account (.*) before deleting customer (.*)")]
         public async Task WhenIDeleteExistingAccountAndCustomer(int AccountId, int CustomerId)
         {
             try

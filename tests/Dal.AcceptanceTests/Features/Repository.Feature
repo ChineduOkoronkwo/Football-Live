@@ -115,7 +115,8 @@ Scenario: Deleting all customer accounts before deleting the customer
 
 
 Scenario: Deleting existing customer accounts before deleting the customer in a transaction
-    When I delete existing account <AccountId> and customer <CustomerId>
+    Given customer <CustomerId> has 1 account which is <AccountId>
+    When I delete the account <AccountId> before deleting customer <CustomerId>
     Then I can verify that account <AccountId> no longer exist
     And I can verify that customer  <CustomerId> no longer exist
     Examples:
@@ -124,7 +125,8 @@ Scenario: Deleting existing customer accounts before deleting the customer in a 
 
 
 Scenario: Deleting customer and one of its accounts in a transaction
-    When I delete existing account <AccountId> and customer <CustomerId>
+    Given customer <CustomerId> has 2 accounts which include <AccountId>
+    When I delete the account <AccountId> before deleting customer <CustomerId>
     Then I can verify the customer deletion throws an exception with <Message>
     And I can verify that the account still exist
     | Id     | Name          | Description     | CurrencyId | AccountTypeId | CustomerId | Balance |
