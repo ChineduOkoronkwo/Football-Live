@@ -114,21 +114,15 @@ namespace Dal.AcceptanceTests.Steps
             await customerRepo.DeleteAsync(param);
         }
 
-        [When("I delete an existing account (.*) and a non-existent customer (.*) in a transaction")]
-        public async Task WhenIDeleteAccountAndCustomerThatDoesNotExist(int AccountId, int CustomerId)
-        {
-            using TransactionScope scope = new TransactionScope();
-            await WhenIDeleteaccount(AccountId);
-            await WhenIdeleteCustomer(CustomerId);
-            scope.Complete();
-        }
-
         [When("I delete existing account (.*) and customer (.*)")]
         public async Task WhenIDeleteExistingAccountAndCustomer(int AccountId, int CustomerId)
         {
             try
             {
-                await WhenIDeleteAccountAndCustomerThatDoesNotExist(AccountId, CustomerId);
+                using TransactionScope scope = new TransactionScope();
+                await WhenIDeleteaccount(AccountId);
+                await WhenIdeleteCustomer(CustomerId);
+                scope.Complete();
             }
             catch (PostgresException ex)
             {
