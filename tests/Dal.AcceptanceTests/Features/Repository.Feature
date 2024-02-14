@@ -125,9 +125,9 @@ Scenario: Deleting existing customer accounts before deleting the customer in a 
 
 Scenario: Deleting customer and one of its accounts in a transaction
     When I delete existing account <AccountId> and customer <CustomerId>
-    And I can verify that the account still exist
+    Then I can verify that the account still exist
     | Id     | Name          | Description     | CurrencyId | AccountTypeId | CustomerId | Balance |
-    | 201006 | Emily Johnson | Savings account | 3          | 1             | 12345      | 0       |
+    | 201005 | Emily Johnson | Current account | 3          | 3             | 12345      | 0       |
 
     And The customer record still exist
     | Id     | FirstName | LastName | MiddleName | DateOfBirth |
