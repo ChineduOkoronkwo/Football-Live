@@ -58,9 +58,14 @@ namespace Dal.AcceptanceTests.Steps
 
         [Given("customer (.*) has (.*) account which is (.*)")]
         [Given("customer (.*) has (.*) accounts which include (.*)")]
-        public void CustomerHasNumAccount(int customerId, int numAccount, int accountId)
+        public async Task CustomerHasNumAccount(int customerId, int numAccount, int accountId)
         {
-            // TO-DO: Implement step
+            var accountRepo = (IRepository)scenarioContext["accountrepo"];
+            var accountFilter = new AccountFilterDto { CustomerId = customerId };
+            var accounts = (List<Account>)await accountRepo.ListAsync<Account>(accountFilter);
+            accounts.Count.Should().Be(numAccount);
+            var account = accounts.Find(acc => acc.Id == accountId);
+            account.Should().NotBeNull();
         }
 
         [When("I use ListAsync on customer repo to read (.*) records starting from record (.*)")]
