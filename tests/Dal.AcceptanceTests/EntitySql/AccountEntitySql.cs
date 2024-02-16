@@ -10,9 +10,9 @@ namespace Dal.AcceptanceTests.EntitySql
         public string ListSqlCommand =>
             "SELECT Id, CurrencyId, AccountTypeId, CustomerId, Name, Description, Balance"
             + " FROM Account"
-            + " WHERE (@CustomerId = null OR CustomerId = @CustomerId)"
-            // + " AND (@CurrencyId = null OR CurrencyId = @CurrencyId)"
-            // + " AND (@AccountTypeId = null OR AccountTypeId = @AccountTypeId)"
+            + " WHERE (@CustomerId IS NULL OR CustomerId = @CustomerId)"
+            + " AND (@CurrencyId IS NULL OR CurrencyId = @CurrencyId)"
+            + " AND (@AccountTypeId IS NULL OR AccountTypeId = @AccountTypeId)"
             + " ORDER BY CurrencyId, Name, AccountTypeId LIMIT @PageSize OFFSET @PageOffset;";
 
         public string CreateSqlCommand => "INSERT INTO Account(Id, CurrencyId, AccountTypeId, CustomerId, Name, Description, Balance)"
