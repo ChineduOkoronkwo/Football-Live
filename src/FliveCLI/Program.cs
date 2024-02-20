@@ -83,6 +83,15 @@ public static class Program
                 entityInfo.Properties.Add(entityProperty);
             }
         }
+
+        foreach (var entity in entityInfos)
+        {
+            Console.WriteLine(entity);
+            foreach (var prop in entity.Properties)
+            {
+                Console.WriteLine($"    {prop}");
+            }
+        }
     }
 
     private static bool IsReferenceType(Type type)

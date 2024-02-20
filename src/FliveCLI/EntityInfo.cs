@@ -5,5 +5,10 @@ namespace FliveCLI
         public string FullName { get; set; } = default!;
         public string Name { get; set; } = default!;
         public List<EntityProperty> Properties { get; set; } = default!;
+
+        public override string ToString()
+        {
+            return $"${FullName} || {Name}";
+        }
     }
 }
