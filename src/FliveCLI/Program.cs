@@ -1,6 +1,9 @@
 ﻿using System.CommandLine;
 using System.Reflection;
+using System.Text;
 using FliveCLI;
+using FliveCLI.EntityColumns;
+using FliveCLI.TableEntities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -22,6 +25,12 @@ public static class Program
     }
 
     internal static void GenRepo(string dirPath)
+    {
+        var entities = CreateEntities(dirPath);
+        Console.WriteLine(GetCreateTableSql(entities));
+    }
+
+    internal static TableEntity[] CreateEntities(string dirPath)
     {
         var files = Directory.GetFiles(dirPath, "*.cs");
 
@@ -50,7 +59,7 @@ public static class Program
                 Console.Error.WriteLine($"{diagnostic.Id}: {diagnostic.GetMessage()}");
             }
 
-            return;
+            return new TableEntity[1];
         }
 
         ms.Seek(0, SeekOrigin.Begin);
@@ -60,48 +69,87 @@ public static class Program
 
         // Get types from the assembly and inspect them
         var types = assembly.GetTypes();
-        var entityInfos = new List<EntityInfo>();
+        var tableEntityMap = new Dictionary<string, TableEntity>();
         foreach (var type in types)
         {
-            var entityInfo = new EntityInfo { FullName = $"{type.FullName}", Name = type.Name, Properties = new List<EntityProperty>() };
-            entityInfos.Add(entityInfo);
-
-            // Inspect public properties
-            PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-            // Get property infos
-            foreach (PropertyInfo property in properties)
-            {
-                var entityProperty = new EntityProperty
-                {
-                    PropertyType = $"{property.PropertyType}",
-                    PropertyName = property.Name,
-                    IsReferenceType = IsReferenceType(property.PropertyType),
-                    IsNullable = IsPropertyNullable(property),
-                    DeclaringType = $"{property.DeclaringType}"
-                };
-                entityInfo.Properties.Add(entityProperty);
-            }
+            var tableEntity = new TableEntity($"{type.FullName}", type.Name);
+            tableEntityMap[tableEntity.FullName] = tableEntity;
         }
 
-        foreach (var entity in entityInfos)
+        foreach (var type in types)
         {
-            Console.WriteLine(entity);
-            foreach (var prop in entity.Properties)
+            ProcessType(type, tableEntityMap, PostgreSqlDataTypeMapping.DotNetToPgSqlMapping);
+        }
+
+        return tableEntityMap.Values.ToArray();
+    }
+
+    internal static void ProcessType(Type type, Dictionary<string, TableEntity> map, Dictionary<string, string> dbTypeMapping)
+    {
+        var typeName = $"{type.FullName}";
+        PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        var attributeColumns = new List<BaseEntityColumn>();
+        var refColumns = new List<RefEntityColumn>();
+
+        foreach (PropertyInfo property in properties)
+        {
+            var propType = property.PropertyType;
+            var name = property.Name;
+            var isNullable = Nullable.GetUnderlyingType(propType) != null;
+            var propTypeStr = isNullable ? $"{Nullable.GetUnderlyingType(propType)}" : $"{propType}";
+
+            if (propType.IsValueType || propType.IsPrimitive)
             {
-                Console.WriteLine($"    {prop}");
+                var dbType = dbTypeMapping[propTypeStr];
+                var col = new BaseEntityColumn(name, dbType, isNullable);
+                attributeColumns.Add(col);
+            }
+            else if (propType == typeof(string) || (isNullable && Nullable.GetUnderlyingType(propType) == typeof(string)))
+            {
+                var dbType = dbTypeMapping[propTypeStr];
+                var length = 256;
+                var col = new EntityColumnWithLength(name, dbType, isNullable, length);
+                attributeColumns.Add(col);
+            }
+            else
+            {
+                var tableEntity = map[propTypeStr];
+                RefEntityColumn col = new RefEntityColumn(name, "", isNullable, tableEntity);
+                refColumns.Add(col);
+                attributeColumns.Add(col);
             }
         }
+
+        var entity = map[typeName];
+        entity.SetColumns(attributeColumns, refColumns);
     }
 
-    private static bool IsReferenceType(Type type)
+    internal static string GetCreateTableSql(TableEntity[] tableEntities)
     {
-        return !type.IsValueType && !type.IsPrimitive && type != typeof(string);
+        var sb = new StringBuilder();
+        var visited = new HashSet<TableEntity>();
+        foreach (var entity in tableEntities)
+        {
+            GetCreateTableSql(entity, sb, visited);
+        }
+
+        return sb.ToString();
     }
 
-    private static bool IsPropertyNullable(PropertyInfo property)
+    internal static void GetCreateTableSql(TableEntity tableEntity, StringBuilder sb, HashSet<TableEntity> visited)
     {
-        Type propType = property.PropertyType;
-        return Nullable.GetUnderlyingType(propType) != null;
+        if (visited.Contains(tableEntity))
+        {
+            return;
+        }
+
+        foreach (var entity in tableEntity.RefEntities)
+        {
+            GetCreateTableSql(entity, sb, visited);
+        }
+
+        sb.Append(tableEntity.GenerateCreateTableSql());
+        sb.AppendLine();
+        sb.AppendLine();
     }
 }
