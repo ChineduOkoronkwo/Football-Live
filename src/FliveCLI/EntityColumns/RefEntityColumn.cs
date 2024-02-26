@@ -31,7 +31,9 @@ namespace FliveCLI.EntityColumns
                 return string.Empty;
             }
 
-            return base.ToTableColumnSql(GetRefColumnName(), dbType);
+            columnName = GetRefColumnName();
+            dbType = ReferenceTable.PrimaryKeyColumn.PkColumn.DbType;
+            return base.ToTableColumnSql(columnName, dbType);
         }
 
         public string GetForeignKeySql()
