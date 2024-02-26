@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using System.Text;
 using FliveCLI.EntityColumns;
 
@@ -43,6 +42,7 @@ namespace FliveCLI.TableEntities
                 sb.AppendLine($"\t{col.GetForeignKeySql()},");
             }
 
+            RemoveLastComma(sb);
             sb.AppendLine(");");
 
             return sb.ToString();
@@ -65,6 +65,18 @@ namespace FliveCLI.TableEntities
             {
                 PrimaryKeyColumn = new PkEntityColumn(pkColum);
                 AttributeColumns.Remove(pkColum);
+            }
+        }
+
+        private static void RemoveLastComma(StringBuilder sb)
+        {
+            for (int index = sb.Length - 1; index > -1; index--)
+            {
+                if (sb[index] == ',')
+                {
+                    sb[index] = '\0';
+                    return;
+                }
             }
         }
     }

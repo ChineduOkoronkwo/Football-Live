@@ -156,6 +156,5 @@ public static class Program
 
         createTableSqls.Add(tableEntity.GenerateCreateTableSql());
         createTableSqls.Add("\n");
-        createTableSqls.Add("\n");
     }
 }
