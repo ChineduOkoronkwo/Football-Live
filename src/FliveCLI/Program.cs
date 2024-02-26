@@ -1,6 +1,5 @@
 ﻿using System.CommandLine;
 using System.Reflection;
-using System.Text;
 using FliveCLI;
 using FliveCLI.EntityColumns;
 using FliveCLI.TableEntities;
@@ -27,7 +26,11 @@ public static class Program
     internal static void GenRepo(string dirPath)
     {
         var entities = CreateEntities(dirPath);
-        Console.WriteLine(GetCreateTableSql(entities));
+        var createTableSqls = GetCreateTableSql(entities);
+        foreach (var tableSql in createTableSqls)
+        {
+            Console.WriteLine(tableSql);
+        }
     }
 
     internal static TableEntity[] CreateEntities(string dirPath)
@@ -90,6 +93,7 @@ public static class Program
         PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
         var attributeColumns = new List<BaseEntityColumn>();
         var refColumns = new List<RefEntityColumn>();
+        var entity = map[typeName];
 
         foreach (PropertyInfo property in properties)
         {
@@ -113,43 +117,45 @@ public static class Program
             }
             else
             {
-                var tableEntity = map[propTypeStr];
-                RefEntityColumn col = new RefEntityColumn(name, "", isNullable, tableEntity);
+                var refTablEntity = map[propTypeStr];
+                RefEntityColumn col = new RefEntityColumn(name, "", isNullable, refTablEntity);
                 refColumns.Add(col);
                 attributeColumns.Add(col);
+                entity.RefEntities.Add(refTablEntity);
             }
         }
 
-        var entity = map[typeName];
         entity.SetColumns(attributeColumns, refColumns);
     }
 
-    internal static string GetCreateTableSql(TableEntity[] tableEntities)
+    internal static List<string> GetCreateTableSql(TableEntity[] tableEntities)
     {
-        var sb = new StringBuilder();
+        var createTableSqls = new List<string>();
         var visited = new HashSet<TableEntity>();
         foreach (var entity in tableEntities)
         {
-            GetCreateTableSql(entity, sb, visited);
+            GetCreateTableSql(entity, createTableSqls, visited);
         }
 
-        return sb.ToString();
+        return createTableSqls;
     }
 
-    internal static void GetCreateTableSql(TableEntity tableEntity, StringBuilder sb, HashSet<TableEntity> visited)
+    internal static void GetCreateTableSql(TableEntity tableEntity, List<string> createTableSqls, HashSet<TableEntity> visited)
     {
         if (visited.Contains(tableEntity))
         {
             return;
         }
 
+        visited.Add(tableEntity);
+
         foreach (var entity in tableEntity.RefEntities)
         {
-            GetCreateTableSql(entity, sb, visited);
+            GetCreateTableSql(entity, createTableSqls, visited);
         }
 
-        sb.Append(tableEntity.GenerateCreateTableSql());
-        sb.AppendLine();
-        sb.AppendLine();
+        createTableSqls.Add(tableEntity.GenerateCreateTableSql());
+        createTableSqls.Add("\n");
+        createTableSqls.Add("\n");
     }
 }

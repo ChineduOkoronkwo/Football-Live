@@ -25,16 +25,19 @@ namespace FliveCLI.TableEntities
             var sb = new StringBuilder();
             sb.AppendLine($"CREATE TABLE {Name.ToLower()} (");
 
+            // primary key
             if (PrimaryKeyColumn is not null)
             {
                 sb.AppendLine($"\t{PrimaryKeyColumn.ToPkTableColumnSql()},");
             }
 
+            // other columns
             foreach (var col in AttributeColumns)
             {
                 sb.AppendLine($"\t{col.ToTableColumnSql()},");
             }
 
+            // foreign keys
             foreach (var col in ReferenceColumns)
             {
                 sb.AppendLine($"\t{col.GetForeignKeySql()},");
