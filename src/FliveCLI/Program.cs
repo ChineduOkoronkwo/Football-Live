@@ -160,11 +160,12 @@ public static class Program
 
     private static bool IsNullableHelper(Type memberType, MemberInfo? declaringType, IEnumerable<CustomAttributeData> customAttributes)
     {
+        var nullableAttributeFullName = "System.Runtime.CompilerServices.NullableAttribute";
         if (memberType.IsValueType)
             return Nullable.GetUnderlyingType(memberType) != null;
 
         var nullable = customAttributes
-            .FirstOrDefault(x => x.AttributeType.FullName == "System.Runtime.CompilerServices.NullableAttribute");
+            .FirstOrDefault(x => x.AttributeType.FullName == nullableAttributeFullName);
         if (nullable != null && nullable.ConstructorArguments.Count == 1)
         {
             var attributeArgument = nullable.ConstructorArguments[0];
@@ -185,7 +186,7 @@ public static class Program
         for (var type = declaringType; type != null; type = type.DeclaringType)
         {
             var context = type.CustomAttributes
-                .FirstOrDefault(x => x.AttributeType.FullName == "System.Runtime.CompilerServices.NullableContextAttribute");
+                .FirstOrDefault(x => x.AttributeType.FullName == nullableAttributeFullName);
             if (context != null &&
                 context.ConstructorArguments.Count == 1 &&
                 context.ConstructorArguments[0].ArgumentType == typeof(byte))
@@ -194,7 +195,6 @@ public static class Program
             }
         }
 
-        // Couldn't find a suitable attribute
         return false;
     }
 }
