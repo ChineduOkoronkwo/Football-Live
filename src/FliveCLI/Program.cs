@@ -130,17 +130,17 @@ public static class Program
 
     internal static List<string> GetCreateTableSql(TableEntity[] tableEntities)
     {
-        var createTableSqls = new List<string>();
+        var tableSqlStatements = new List<string>();
         var visited = new HashSet<TableEntity>();
         foreach (var entity in tableEntities)
         {
-            GetCreateTableSql(entity, createTableSqls, visited);
+            GetCreateTableSql(entity, tableSqlStatements, visited);
         }
 
-        return createTableSqls;
+        return tableSqlStatements;
     }
 
-    internal static void GetCreateTableSql(TableEntity tableEntity, List<string> createTableSqls, HashSet<TableEntity> visited)
+    internal static void GetCreateTableSql(TableEntity tableEntity, List<string> tableSqlStatements, HashSet<TableEntity> visited)
     {
         if (visited.Contains(tableEntity))
         {
@@ -151,10 +151,9 @@ public static class Program
 
         foreach (var entity in tableEntity.RefEntities)
         {
-            GetCreateTableSql(entity, createTableSqls, visited);
+            GetCreateTableSql(entity, tableSqlStatements, visited);
         }
 
-        createTableSqls.Add(tableEntity.GenerateCreateTableSql());
-        createTableSqls.Add("\n");
+        tableSqlStatements.Add(tableEntity.GenerateCreateTableSql());
     }
 }
