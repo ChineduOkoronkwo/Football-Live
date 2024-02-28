@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using System.Text;
 using FliveCLI.EntityColumns;
 using FliveCLI.Helpers;
@@ -31,36 +32,54 @@ namespace FliveCLI.TableEntities
             };
         }
 
-        public string GenerateListSql()
+        public SqlStatementList GenerateListSql()
         {
             var cols = GetColumnNames();
-            var filtercols = new List<string>();
+            var filterSqlList = new List<string>();
             var pkColumName = PrimaryKeyColumn?.PkColumn.ColumnName;
             var orderByClause = "";
             if (!string.IsNullOrWhiteSpace(pkColumName))
             {
-                filtercols.Add($"(@{pkColumName} IS NULL OR {pkColumName} = @{pkColumName})");
-                orderByClause = $"\nORDER BY {pkColumName} ASC";
+                filterSqlList.Add($"AND (@{pkColumName} IS NULL OR {pkColumName} = @{pkColumName})");
+                orderByClause = $"ORDER BY {pkColumName} ASC";
             }
 
             foreach (var col in ReferenceColumns)
             {
                 var refColName = col.GetRefColumnName();
-                filtercols.Add($"(@{refColName} IS NULL OR {refColName} = @{refColName})");
+                filterSqlList.Add($"AND (@{refColName} IS NULL OR {refColName} = @{refColName})");
             }
 
-            var limitClause = "\nLIMIT @pagesize OFFSET @pageoffset;";
-            var whereClause = filtercols.Count == 0 ? "" : $"\nWHERE {string.Join("\nAND", filtercols)}";
-            return $"SELECT {string.Join(", ", cols)}\nFROM {Name}{whereClause}{orderByClause}{limitClause}";
+            if (filterSqlList.Count > 0)
+            {
+                filterSqlList[0] = filterSqlList[0].Replace("AND ", "WHERE ");
+            }
+
+            var limitClause = "LIMIT @pagesize OFFSET @pageoffset;";
+            var sqlList = new SqlStatementList
+            {
+                $"SELECT {string.Join(", ", cols)}",
+                $"FROM {Name}"
+            };
+
+            foreach (var sql in filterSqlList)
+            {
+                sqlList.Add(sql);
+            }
+
+            sqlList.Add(orderByClause);
+            sqlList.Add(limitClause);
+
+            return sqlList;
         }
 
         public SqlStatementList GenerateDeleteSql()
         {
-            return new SqlStatementList
-            {
+            return
+            [
                 $"DELETE FROM {Name}",
                 $"{GetDefaultWhereClause()};"
-            };
+            ];
         }
 
         public string GenerateCreateTableSql()
