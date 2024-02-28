@@ -44,11 +44,9 @@ namespace FliveCLI.TableEntities
                 orderByClause = $"ORDER BY {pkColumName} ASC";
             }
 
-            foreach (var col in ReferenceColumns)
-            {
-                var refColName = col.GetRefColumnName();
-                filterSqlList.Add($"AND (@{refColName} IS NULL OR {refColName} = @{refColName})");
-            }
+            ReferenceColumns.ForEach(col => filterSqlList.Add(
+                $"AND (@{col.ColumnName} IS NULL OR {col.ColumnName} = @{col.ColumnName})"
+            ));
 
             if (filterSqlList.Count > 0)
             {

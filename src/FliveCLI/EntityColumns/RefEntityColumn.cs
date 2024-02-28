@@ -10,11 +10,7 @@ namespace FliveCLI.EntityColumns
             ReferenceTable = refEntity;
         }
 
-        public override string ColumnName => GetRefColumnName();
-
-        public TableEntity ReferenceTable { get; }
-
-        public string GetRefColumnName()
+        private string GetRefColumnName()
         {
             if (ReferenceTable.PrimaryKeyColumn is null)
             {
@@ -25,6 +21,10 @@ namespace FliveCLI.EntityColumns
                 ? ReferenceTable.PrimaryKeyColumn.PkColumn.ColumnName
                 : $"{ReferenceTable.Name}{ReferenceTable.PrimaryKeyColumn.PkColumn.ColumnName}";
         }
+
+        public override string ColumnName => GetRefColumnName();
+
+        public TableEntity ReferenceTable { get; }
 
         public override string ToTableColumnSql(string columnName = "", string dbType = "")
         {
