@@ -82,6 +82,16 @@ namespace FliveCLI.TableEntities
             ];
         }
 
+        public SqlStatementList GenerateCreateSql()
+        {
+            var cols = GetColumnNames();
+            return
+            [
+                $"INSERT INTO {Name}({string.Join(',', cols)})",
+                $"VALUES(@{string.Join(", @", cols)});"
+            ];
+        }
+
         public string GenerateCreateTableSql()
         {
             var sb = new StringBuilder();

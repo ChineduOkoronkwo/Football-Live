@@ -9,7 +9,7 @@ namespace FliveCLI.EntityColumns
             IsNullable = isNullable;
         }
 
-        public string ColumnName { get; }
+        public virtual string ColumnName { get; }
         public string DbType { get; }
         public bool IsNullable { get; }
 

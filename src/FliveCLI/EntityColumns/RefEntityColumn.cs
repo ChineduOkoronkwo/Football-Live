@@ -10,6 +10,8 @@ namespace FliveCLI.EntityColumns
             ReferenceTable = refEntity;
         }
 
+        public override string ColumnName => GetRefColumnName();
+
         public TableEntity ReferenceTable { get; }
 
         public string GetRefColumnName()
