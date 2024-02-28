@@ -28,7 +28,7 @@ namespace FliveCLI.Helpers
 
         public override string ToString()
         {
-            return string.Join('\0', sqlList);
+            return string.Join('\n', sqlList);
         }
     }
 }

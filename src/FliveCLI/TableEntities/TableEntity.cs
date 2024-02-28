@@ -20,11 +20,15 @@ namespace FliveCLI.TableEntities
         public List<TableEntity> RefEntities { get; internal set; }
         public PkEntityColumn? PrimaryKeyColumn { get; internal set; }
 
-        public string GenerateGetSql()
+        public SqlStatementList GenerateGetSql()
         {
             var cols = GetColumnNames();
-
-            return $"SELECT {string.Join(", ", cols)} \nFROM {Name}{GetDefaultWhereClause()};";
+            return new SqlStatementList
+            {
+                $"SELECT {string.Join(", ", cols)}",
+                $"FROM {Name}",
+                $"{GetDefaultWhereClause()};"
+            };
         }
 
         public string GenerateListSql()
@@ -128,7 +132,7 @@ namespace FliveCLI.TableEntities
         private string GetDefaultWhereClause()
         {
             var pkColumName = PrimaryKeyColumn?.PkColumn.ColumnName;
-            return string.IsNullOrWhiteSpace(pkColumName) ? "" : $"\nWHERE {pkColumName} = @{pkColumName}";
+            return string.IsNullOrWhiteSpace(pkColumName) ? "" : $"WHERE {pkColumName} = @{pkColumName}";
         }
 
         private static void ReplaceLastChar(StringBuilder sb, char oldChar, char newChar)
