@@ -27,11 +27,7 @@ public static class Program
     internal static void GenRepo(string dirPath)
     {
         var entities = CreateEntities(dirPath);
-        var createTableSqls = GetCreateTableSql(entities);
-        foreach (var tableSql in createTableSqls)
-        {
-            Console.WriteLine(tableSql);
-        }
+        CreateRepo(entities);
     }
 
     internal static TableEntity[] CreateEntities(string dirPath)
@@ -129,19 +125,16 @@ public static class Program
         entity.SetColumns(attributeColumns, refColumns);
     }
 
-    internal static List<string> GetCreateTableSql(TableEntity[] tableEntities)
+    internal static void CreateRepo(TableEntity[] tableEntities)
     {
-        var tableSqlStatements = new List<string>();
         var visited = new HashSet<TableEntity>();
         foreach (var entity in tableEntities)
         {
-            GetCreateTableSql(entity, tableSqlStatements, visited);
+            CreateRepo(entity, visited);
         }
-
-        return tableSqlStatements;
     }
 
-    internal static void GetCreateTableSql(TableEntity tableEntity, List<string> tableSqlStatements, HashSet<TableEntity> visited)
+    internal static void CreateRepo(TableEntity tableEntity, HashSet<TableEntity> visited)
     {
         if (visited.Contains(tableEntity))
         {
@@ -152,10 +145,17 @@ public static class Program
 
         foreach (var entity in tableEntity.RefEntities)
         {
-            GetCreateTableSql(entity, tableSqlStatements, visited);
+            CreateRepo(entity, visited);
         }
 
-        tableSqlStatements.Add(tableEntity.GenerateCreateTableSql());
+        // Write to the dbscript file
+        // Write DTOs
+        // Write the EntitySql Class
+        // Write the Repo class
+        Console.WriteLine(tableEntity.GenerateCreateTableSql());
+        Console.WriteLine(tableEntity.GenerateGetSql());
+        Console.WriteLine(tableEntity.GenerateListSql());
+        Console.WriteLine();
     }
 
     private static bool IsNullableHelper(Type memberType, MemberInfo? declaringType, IEnumerable<CustomAttributeData> customAttributes)

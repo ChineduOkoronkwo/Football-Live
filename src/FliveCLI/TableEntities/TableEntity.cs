@@ -8,7 +8,7 @@ namespace FliveCLI.TableEntities
         public TableEntity(string fullName, string name)
         {
             FullName = fullName;
-            Name = name;
+            Name = name.ToLower();
             RefEntities = new List<TableEntity>();
         }
 
@@ -19,27 +19,59 @@ namespace FliveCLI.TableEntities
         public List<TableEntity> RefEntities { get; internal set; }
         public PkEntityColumn? PrimaryKeyColumn { get; internal set; }
 
+        public string GenerateGetSql()
+        {
+            var cols = GetColumnNames();
+            var pkColumName = PrimaryKeyColumn?.PkColumn.ColumnName;
+            var whereClause = string.IsNullOrWhiteSpace(pkColumName) ? "" : $"\nWHERE {pkColumName} = @{pkColumName}";
+
+            return $"SELECT {string.Join(", ", cols)} \nFROM {Name}{whereClause};";
+        }
+
+        public string GenerateListSql()
+        {
+            var cols = GetColumnNames();
+            var filtercols = new List<string>();
+            var pkColumName = PrimaryKeyColumn?.PkColumn.ColumnName;
+            var orderByClause = "";
+            if (!string.IsNullOrWhiteSpace(pkColumName))
+            {
+                filtercols.Add($"(@{pkColumName} IS NULL OR {pkColumName} = @{pkColumName})");
+                orderByClause = $"\nORDER BY {pkColumName} ASC";
+            }
+
+            foreach (var col in ReferenceColumns)
+            {
+                var refColName = col.GetRefColumnName();
+                filtercols.Add($"(@{refColName} IS NULL OR {refColName} = @{refColName})");
+            }
+
+            var limitClause = "\nLIMIT @pagesize OFFSET @pageoffset;";
+            var whereClause = filtercols.Count == 0 ? "" : $"\nWHERE {string.Join("\nAND", filtercols)}";
+            return $"SELECT {string.Join(", ", cols)}\nFROM {Name}{whereClause}{orderByClause}{limitClause}";
+        }
+
         public string GenerateCreateTableSql()
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"CREATE TABLE {Name.ToLower()} (");
+            sb.AppendLine($"CREATE TABLE {Name} (");
 
             // primary key
             if (PrimaryKeyColumn is not null)
             {
-                sb.AppendLine($"\t{PrimaryKeyColumn.ToPkTableColumnSql()},");
+                sb.AppendLine($"{PrimaryKeyColumn.ToPkTableColumnSql()},");
             }
 
             // other columns
             foreach (var col in AttributeColumns)
             {
-                sb.AppendLine($"\t{col.ToTableColumnSql()},");
+                sb.AppendLine($"{col.ToTableColumnSql()},");
             }
 
             // foreign keys
             foreach (var col in ReferenceColumns)
             {
-                sb.AppendLine($"\t{col.GetForeignKeySql()},");
+                sb.AppendLine($"{col.GetForeignKeySql()},");
             }
 
             ReplaceLastChar(sb, ',', '\0');
@@ -66,6 +98,23 @@ namespace FliveCLI.TableEntities
                 PrimaryKeyColumn = new PkEntityColumn(pkColum);
                 AttributeColumns.Remove(pkColum);
             }
+        }
+
+        private List<string> GetColumnNames(bool includePkColumn = true)
+        {
+            var entityColumns = new List<string>();
+            var pkColName = PrimaryKeyColumn?.PkColumn.ColumnName;
+            if (includePkColumn && !string.IsNullOrWhiteSpace(pkColName))
+            {
+                entityColumns.Add(pkColName);
+            }
+
+            foreach (var col in AttributeColumns)
+            {
+                entityColumns.Add(col.ColumnName);
+            }
+
+            return entityColumns;
         }
 
         private static void ReplaceLastChar(StringBuilder sb, char oldChar, char newChar)

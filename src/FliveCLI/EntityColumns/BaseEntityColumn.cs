@@ -4,7 +4,7 @@ namespace FliveCLI.EntityColumns
     {
         public BaseEntityColumn(string columnName, string dbType, bool isNullable)
         {
-            ColumnName = columnName;
+            ColumnName = columnName.ToLower();
             DbType = dbType;
             IsNullable = isNullable;
         }
