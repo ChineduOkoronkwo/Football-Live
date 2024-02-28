@@ -153,8 +153,13 @@ public static class Program
         // Write the EntitySql Class
         // Write the Repo class
         Console.WriteLine(tableEntity.GenerateCreateTableSql());
+        Console.WriteLine();
         Console.WriteLine(tableEntity.GenerateGetSql());
+        Console.WriteLine();
         Console.WriteLine(tableEntity.GenerateListSql());
+        Console.WriteLine();
+        Console.WriteLine(tableEntity.GenerateDeleteSql());
+        Console.WriteLine("=========================================");
         Console.WriteLine();
     }
 

@@ -1,5 +1,6 @@
 using System.Text;
 using FliveCLI.EntityColumns;
+using FliveCLI.Helpers;
 
 namespace FliveCLI.TableEntities
 {
@@ -22,10 +23,8 @@ namespace FliveCLI.TableEntities
         public string GenerateGetSql()
         {
             var cols = GetColumnNames();
-            var pkColumName = PrimaryKeyColumn?.PkColumn.ColumnName;
-            var whereClause = string.IsNullOrWhiteSpace(pkColumName) ? "" : $"\nWHERE {pkColumName} = @{pkColumName}";
 
-            return $"SELECT {string.Join(", ", cols)} \nFROM {Name}{whereClause};";
+            return $"SELECT {string.Join(", ", cols)} \nFROM {Name}{GetDefaultWhereClause()};";
         }
 
         public string GenerateListSql()
@@ -49,6 +48,15 @@ namespace FliveCLI.TableEntities
             var limitClause = "\nLIMIT @pagesize OFFSET @pageoffset;";
             var whereClause = filtercols.Count == 0 ? "" : $"\nWHERE {string.Join("\nAND", filtercols)}";
             return $"SELECT {string.Join(", ", cols)}\nFROM {Name}{whereClause}{orderByClause}{limitClause}";
+        }
+
+        public SqlStatementList GenerateDeleteSql()
+        {
+            return new SqlStatementList
+            {
+                $"DELETE FROM {Name}",
+                $"{GetDefaultWhereClause()};"
+            };
         }
 
         public string GenerateCreateTableSql()
@@ -115,6 +123,12 @@ namespace FliveCLI.TableEntities
             }
 
             return entityColumns;
+        }
+
+        private string GetDefaultWhereClause()
+        {
+            var pkColumName = PrimaryKeyColumn?.PkColumn.ColumnName;
+            return string.IsNullOrWhiteSpace(pkColumName) ? "" : $"\nWHERE {pkColumName} = @{pkColumName}";
         }
 
         private static void ReplaceLastChar(StringBuilder sb, char oldChar, char newChar)
