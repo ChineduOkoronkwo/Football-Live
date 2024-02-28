@@ -87,7 +87,7 @@ namespace FliveCLI.TableEntities
             var cols = GetColumnNames();
             return
             [
-                $"INSERT INTO {Name}({string.Join(',', cols)})",
+                $"INSERT INTO {Name}({string.Join(", ", cols)})",
                 $"VALUES(@{string.Join(", @", cols)});"
             ];
         }
