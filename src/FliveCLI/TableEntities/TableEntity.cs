@@ -42,7 +42,7 @@ namespace FliveCLI.TableEntities
                 sb.AppendLine($"\t{col.GetForeignKeySql()},");
             }
 
-            RemoveLastComma(sb);
+            ReplaceLastChar(sb, ',', '\0');
             sb.AppendLine(");");
 
             return sb.ToString();
@@ -68,13 +68,13 @@ namespace FliveCLI.TableEntities
             }
         }
 
-        private static void RemoveLastComma(StringBuilder sb)
+        private static void ReplaceLastChar(StringBuilder sb, char oldChar, char newChar)
         {
             for (int index = sb.Length - 1; index > -1; index--)
             {
-                if (sb[index] == ',')
+                if (sb[index] == oldChar)
                 {
-                    sb[index] = '\0';
+                    sb[index] = newChar;
                     return;
                 }
             }
