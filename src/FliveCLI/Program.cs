@@ -161,6 +161,8 @@ public static class Program
         Console.WriteLine(tableEntity.GenerateDeleteSql());
         Console.WriteLine();
         Console.WriteLine(tableEntity.GenerateCreateSql());
+        Console.WriteLine();
+        Console.WriteLine(tableEntity.GenerateUpdateSql());
         Console.WriteLine("=========================================");
         Console.WriteLine();
     }

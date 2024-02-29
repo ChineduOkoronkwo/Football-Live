@@ -1,4 +1,3 @@
-using System.Text;
 using FliveCLI.EntityColumns;
 using FliveCLI.Helpers;
 
@@ -70,15 +69,6 @@ namespace FliveCLI.TableEntities
             return sqlList;
         }
 
-        public SqlStatementList GenerateDeleteSql()
-        {
-            return
-            [
-                $"DELETE FROM {Name}",
-                $"{GetDefaultWhereClause()};"
-            ];
-        }
-
         public SqlStatementList GenerateCreateSql()
         {
             var cols = GetColumnNames();
@@ -89,33 +79,58 @@ namespace FliveCLI.TableEntities
             ];
         }
 
-        public string GenerateCreateTableSql()
+        public SqlStatementList GenerateUpdateSql()
         {
-            var sb = new StringBuilder();
-            sb.AppendLine($"CREATE TABLE {Name} (");
+            var cols = GetColumnNames(false);
+            for (int index = 0; index < cols.Count; index++)
+            {
+                cols[index] = $"{cols[index]} = @{cols[index]}";
+            }
+
+            return
+            [
+                $"UPDATE {Name}",
+                $"SET {string.Join(", ", cols)}",
+                $"{GetDefaultWhereClause()};"
+            ];
+        }
+
+        public SqlStatementList GenerateDeleteSql()
+        {
+            return
+            [
+                $"DELETE FROM {Name}",
+                $"{GetDefaultWhereClause()};"
+            ];
+        }
+
+        public SqlStatementList GenerateCreateTableSql()
+        {
+            var sqlList = new SqlStatementList { $"CREATE TABLE {Name} (" };
 
             // primary key
             if (PrimaryKeyColumn is not null)
             {
-                sb.AppendLine($"{PrimaryKeyColumn.ToPkTableColumnSql()},");
+                sqlList.Add($"{PrimaryKeyColumn.ToPkTableColumnSql()},");
             }
 
             // other columns
             foreach (var col in AttributeColumns)
             {
-                sb.AppendLine($"{col.ToTableColumnSql()},");
+                sqlList.Add($"{col.ToTableColumnSql()},");
             }
 
             // foreign keys
             foreach (var col in ReferenceColumns)
             {
-                sb.AppendLine($"{col.GetForeignKeySql()},");
+                sqlList.Add($"{col.GetForeignKeySql()},");
             }
 
-            ReplaceLastChar(sb, ',', '\0');
-            sb.AppendLine(");");
+            var lastIndex = sqlList.Count - 1;
+            sqlList[lastIndex] = RemoveChar(sqlList[lastIndex], ',');
+            sqlList.Add(");");
 
-            return sb.ToString();
+            return sqlList;
         }
 
         public void SetColumns(List<BaseEntityColumn> attributeColumns, List<RefEntityColumn> referenceColumns)
@@ -161,16 +176,10 @@ namespace FliveCLI.TableEntities
             return string.IsNullOrWhiteSpace(pkColumName) ? "" : $"WHERE {pkColumName} = @{pkColumName}";
         }
 
-        private static void ReplaceLastChar(StringBuilder sb, char oldChar, char newChar)
+        private static string RemoveChar(string str, char oldChar)
         {
-            for (int index = sb.Length - 1; index > -1; index--)
-            {
-                if (sb[index] == oldChar)
-                {
-                    sb[index] = newChar;
-                    return;
-                }
-            }
+            var indexOfOldChar = str.LastIndexOf(oldChar);
+            return $"{str[..indexOfOldChar]}{str[(indexOfOldChar + 1)..]}";
         }
     }
 }

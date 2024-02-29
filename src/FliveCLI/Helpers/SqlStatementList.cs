@@ -4,21 +4,29 @@ namespace FliveCLI.Helpers
 {
     public class SqlStatementList : IEnumerable<string>
     {
-        private readonly List<string> sqlList;
+        private readonly List<string> data;
 
         public SqlStatementList()
         {
-            sqlList = new List<string>();
+            data = new List<string>();
         }
 
         public void Add(string item)
         {
-            sqlList.Add(item);
+            data.Add(item);
+        }
+
+        public int Count => data.Count;
+
+        public string this[int index]
+        {
+            get => data[index];
+            set => data[index] = value;
         }
 
         public IEnumerator<string> GetEnumerator()
         {
-            return sqlList.GetEnumerator();
+            return data.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -28,7 +36,7 @@ namespace FliveCLI.Helpers
 
         public override string ToString()
         {
-            return string.Join('\n', sqlList);
+            return string.Join('\n', data);
         }
     }
 }
