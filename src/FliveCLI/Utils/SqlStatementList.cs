@@ -36,7 +36,7 @@ namespace FliveCLI.Utils
 
         public override string ToString()
         {
-            return string.Join('\n', data);
+            return string.Join(' ', data);
         }
     }
 }

@@ -8,12 +8,14 @@ namespace FliveCLI.TableEntities
         public TableEntity(string fullName, string name)
         {
             FullName = fullName;
+            ClassName = name;
             Name = name.ToLower();
             RefEntities = new List<TableEntity>();
         }
 
         public string FullName { get; }
         public string Name { get; }
+        public string ClassName { get; }
         public List<BaseEntityColumn> AttributeColumns { get; internal set; } = default!;
         public List<RefEntityColumn> ReferenceColumns { get; internal set; } = default!;
         public List<TableEntity> RefEntities { get; internal set; }
@@ -22,12 +24,12 @@ namespace FliveCLI.TableEntities
         public StringContentList GenerateGetSql()
         {
             var cols = GetColumnNames();
-            return new StringContentList
-            {
+            return
+            [
                 $"SELECT {string.Join(", ", cols)}",
                 $"FROM {Name}",
                 $"{GetDefaultWhereClause()};"
-            };
+            ];
         }
 
         public StringContentList GenerateListSql()

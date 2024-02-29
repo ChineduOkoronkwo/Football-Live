@@ -2,7 +2,6 @@
 using System.CommandLine;
 using System.Reflection;
 using FliveCLI;
-using FliveCLI.ClassGenerators;
 using FliveCLI.EntityColumns;
 using FliveCLI.TableEntities;
 using FliveCLI.Utils;
@@ -157,6 +156,7 @@ public static class Program
         // Write the Repo class
         // Write files to disk
         FileWriter.WriteDBScript(tableEntity.GenerateCreateTableSql(), "DbScripts.sql", "DbScripts");
+        FileWriter.WriteEntitySql(tableEntity, "EntitySql");
     }
 
     private static bool IsNullableHelper(Type memberType, MemberInfo? declaringType, IEnumerable<CustomAttributeData> customAttributes)
