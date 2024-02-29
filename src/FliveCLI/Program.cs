@@ -2,8 +2,10 @@
 using System.CommandLine;
 using System.Reflection;
 using FliveCLI;
+using FliveCLI.ClassGenerators;
 using FliveCLI.EntityColumns;
 using FliveCLI.TableEntities;
+using FliveCLI.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -127,6 +129,7 @@ public static class Program
 
     internal static void CreateRepo(TableEntity[] tableEntities)
     {
+        FileWriter.DeleteFile("DbScripts.sql", "DbScripts");
         var visited = new HashSet<TableEntity>();
         foreach (var entity in tableEntities)
         {
@@ -152,19 +155,8 @@ public static class Program
         // Write DTOs
         // Write the EntitySql Class
         // Write the Repo class
-        Console.WriteLine(tableEntity.GenerateCreateTableSql());
-        Console.WriteLine();
-        Console.WriteLine(tableEntity.GenerateGetSql());
-        Console.WriteLine();
-        Console.WriteLine(tableEntity.GenerateListSql());
-        Console.WriteLine();
-        Console.WriteLine(tableEntity.GenerateDeleteSql());
-        Console.WriteLine();
-        Console.WriteLine(tableEntity.GenerateCreateSql());
-        Console.WriteLine();
-        Console.WriteLine(tableEntity.GenerateUpdateSql());
-        Console.WriteLine("=========================================");
-        Console.WriteLine();
+        // Write files to disk
+        FileWriter.WriteDBScript(tableEntity.GenerateCreateTableSql(), "DbScripts.sql", "DbScripts");
     }
 
     private static bool IsNullableHelper(Type memberType, MemberInfo? declaringType, IEnumerable<CustomAttributeData> customAttributes)

@@ -1,12 +1,12 @@
 using System.Collections;
 
-namespace FliveCLI.Helpers
+namespace FliveCLI.Utils
 {
-    public class SqlStatementList : IEnumerable<string>
+    public class StringContentList : IEnumerable<string>
     {
         private readonly List<string> data;
 
-        public SqlStatementList()
+        public StringContentList()
         {
             data = new List<string>();
         }

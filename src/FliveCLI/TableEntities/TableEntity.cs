@@ -1,5 +1,5 @@
 using FliveCLI.EntityColumns;
-using FliveCLI.Helpers;
+using FliveCLI.Utils;
 
 namespace FliveCLI.TableEntities
 {
@@ -19,10 +19,10 @@ namespace FliveCLI.TableEntities
         public List<TableEntity> RefEntities { get; internal set; }
         public PkEntityColumn? PrimaryKeyColumn { get; internal set; }
 
-        public SqlStatementList GenerateGetSql()
+        public StringContentList GenerateGetSql()
         {
             var cols = GetColumnNames();
-            return new SqlStatementList
+            return new StringContentList
             {
                 $"SELECT {string.Join(", ", cols)}",
                 $"FROM {Name}",
@@ -30,7 +30,7 @@ namespace FliveCLI.TableEntities
             };
         }
 
-        public SqlStatementList GenerateListSql()
+        public StringContentList GenerateListSql()
         {
             var cols = GetColumnNames();
             var filterSqlList = new List<string>();
@@ -52,7 +52,7 @@ namespace FliveCLI.TableEntities
             }
 
             var limitClause = "LIMIT @pagesize OFFSET @pageoffset;";
-            var sqlList = new SqlStatementList
+            var sqlList = new StringContentList
             {
                 $"SELECT {string.Join(", ", cols)}",
                 $"FROM {Name}"
@@ -69,7 +69,7 @@ namespace FliveCLI.TableEntities
             return sqlList;
         }
 
-        public SqlStatementList GenerateCreateSql()
+        public StringContentList GenerateCreateSql()
         {
             var cols = GetColumnNames();
             return
@@ -79,7 +79,7 @@ namespace FliveCLI.TableEntities
             ];
         }
 
-        public SqlStatementList GenerateUpdateSql()
+        public StringContentList GenerateUpdateSql()
         {
             var cols = GetColumnNames(false);
             for (int index = 0; index < cols.Count; index++)
@@ -95,7 +95,7 @@ namespace FliveCLI.TableEntities
             ];
         }
 
-        public SqlStatementList GenerateDeleteSql()
+        public StringContentList GenerateDeleteSql()
         {
             return
             [
@@ -104,9 +104,9 @@ namespace FliveCLI.TableEntities
             ];
         }
 
-        public SqlStatementList GenerateCreateTableSql()
+        public StringContentList GenerateCreateTableSql()
         {
-            var sqlList = new SqlStatementList { $"CREATE TABLE {Name} (" };
+            var sqlList = new StringContentList { $"CREATE TABLE {Name} (" };
 
             // primary key
             if (PrimaryKeyColumn is not null)
