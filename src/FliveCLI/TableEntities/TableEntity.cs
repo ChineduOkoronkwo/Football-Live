@@ -20,6 +20,21 @@ namespace FliveCLI.TableEntities
         public List<RefEntityColumn> ReferenceColumns { get; internal set; } = default!;
         public List<TableEntity> RefEntities { get; internal set; }
         public PkEntityColumn? PrimaryKeyColumn { get; internal set; }
+        public List<BaseEntityColumn> EntityColumns
+        {
+            get
+            {
+                var cols = new List<BaseEntityColumn>();
+                if (PrimaryKeyColumn is not null)
+                {
+                    cols.Add(PrimaryKeyColumn.PkColumn);
+                }
+
+                cols.AddRange(AttributeColumns);
+                cols.AddRange(ReferenceColumns);
+                return cols;
+            }
+        }
 
         public StringContentList GenerateGetSql()
         {

@@ -2,15 +2,19 @@ namespace FliveCLI.EntityColumns
 {
     public class BaseEntityColumn
     {
-        public BaseEntityColumn(string columnName, string dbType, bool isNullable)
+        public BaseEntityColumn(string name, string fieldType, string dbType, bool isNullable)
         {
-            ColumnName = columnName.ToLower();
+            FieldName = name;
+            ColumnName = name.ToLower();
+            FieldType = fieldType;
             DbType = dbType;
             IsNullable = isNullable;
         }
 
         public virtual string ColumnName { get; }
-        public string DbType { get; }
+        public virtual string DbType { get; }
+        public virtual string FieldName { get; }
+        public virtual string FieldType { get; }
         public bool IsNullable { get; }
 
         public virtual string ToTableColumnSql(string columnName = "", string dbType = "")

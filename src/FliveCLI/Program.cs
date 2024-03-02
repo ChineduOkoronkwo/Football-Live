@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.CommandLine;
 using System.Reflection;
-using FliveCLI;
 using FliveCLI.EntityColumns;
 using FliveCLI.TableEntities;
 using FliveCLI.Utils;
@@ -103,20 +102,20 @@ public static class Program
             if (propType.IsValueType || propType.IsPrimitive)
             {
                 var dbType = dbTypeMapping[propTypeStr];
-                var col = new BaseEntityColumn(name, dbType, isNullable);
+                var col = new BaseEntityColumn(name, propTypeStr, dbType, isNullable);
                 attributeColumns.Add(col);
             }
             else if (propType == typeof(string) || (isNullable && Nullable.GetUnderlyingType(propType) == typeof(string)))
             {
                 var dbType = dbTypeMapping[propTypeStr];
                 var length = 256;
-                var col = new EntityColumnWithLength(name, dbType, isNullable, length);
+                var col = new EntityColumnWithLength(name, propTypeStr, dbType, isNullable, length);
                 attributeColumns.Add(col);
             }
             else
             {
                 var refTablEntity = map[propTypeStr];
-                RefEntityColumn col = new RefEntityColumn(name, propTypeStr, isNullable, refTablEntity);
+                RefEntityColumn col = new RefEntityColumn(name, propTypeStr, propTypeStr, isNullable, refTablEntity);
                 refColumns.Add(col);
                 attributeColumns.Add(col);
                 entity.RefEntities.Add(refTablEntity);
@@ -128,7 +127,7 @@ public static class Program
 
     internal static void CreateRepo(TableEntity[] tableEntities)
     {
-        FileWriter.DeleteFile("DbScripts.sql", "DbScripts");
+        FileWriter.DeleteAndCreateDirectories(true);
         var visited = new HashSet<TableEntity>();
         foreach (var entity in tableEntities)
         {
@@ -150,13 +149,10 @@ public static class Program
             CreateRepo(entity, visited);
         }
 
-        // Write to the dbscript file
-        // Write DTOs
-        // Write the EntitySql Class
         // Write the Repo class
-        // Write files to disk
         FileWriter.WriteDBScript(tableEntity.GenerateCreateTableSql(), "DbScripts.sql", "DbScripts");
         FileWriter.WriteEntitySql(tableEntity, "EntitySql");
+        FileWriter.WriteDto(tableEntity);
     }
 
     private static bool IsNullableHelper(Type memberType, MemberInfo? declaringType, IEnumerable<CustomAttributeData> customAttributes)

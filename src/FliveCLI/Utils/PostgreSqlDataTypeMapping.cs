@@ -1,4 +1,4 @@
-namespace FliveCLI
+namespace FliveCLI.Utils
 {
     public static class PostgreSqlDataTypeMapping
     {

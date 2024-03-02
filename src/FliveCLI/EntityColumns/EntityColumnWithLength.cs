@@ -2,8 +2,8 @@ namespace FliveCLI.EntityColumns
 {
     public class EntityColumnWithLength : BaseEntityColumn
     {
-        public EntityColumnWithLength(string columnName, string dbType, bool isNullable, int length)
-            : base(columnName, dbType, isNullable)
+        public EntityColumnWithLength(string columnName, string fieldType, string dbType, bool isNullable, int length)
+            : base(columnName, fieldType, dbType, isNullable)
         {
             Length = length;
         }
