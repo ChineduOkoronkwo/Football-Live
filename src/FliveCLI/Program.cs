@@ -129,13 +129,14 @@ public static class Program
     {
         FileWriter.DeleteAndCreateDirectories(true);
         var visited = new HashSet<TableEntity>();
+        var createdDtos = new HashSet<string>();
         foreach (var entity in tableEntities)
         {
-            CreateRepo(entity, visited);
+            CreateRepo(entity, visited, createdDtos);
         }
     }
 
-    internal static void CreateRepo(TableEntity tableEntity, HashSet<TableEntity> visited)
+    internal static void CreateRepo(TableEntity tableEntity, HashSet<TableEntity> visited, HashSet<string> createdDtos)
     {
         if (visited.Contains(tableEntity))
         {
@@ -146,13 +147,13 @@ public static class Program
 
         foreach (var entity in tableEntity.RefEntities)
         {
-            CreateRepo(entity, visited);
+            CreateRepo(entity, visited, createdDtos);
         }
 
         // Write the Repo class
         FileWriter.WriteDBScript(tableEntity.GenerateCreateTableSql());
         FileWriter.WriteEntitySql(tableEntity);
-        FileWriter.WriteDto(tableEntity);
+        FileWriter.WriteDto(tableEntity, createdDtos);
     }
 
     private static bool IsNullableHelper(Type memberType, MemberInfo? declaringType, IEnumerable<CustomAttributeData> customAttributes)
