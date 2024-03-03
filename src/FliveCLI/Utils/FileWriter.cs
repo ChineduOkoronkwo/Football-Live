@@ -1,10 +1,15 @@
 using System.Text;
+using FliveCLI.EntityColumns;
 using FliveCLI.TableEntities;
 
 namespace FliveCLI.Utils
 {
     public static class FileWriter
     {
+        private static string DbDtoFolderName => "DbDtos";
+        private static string EntitySqlFolderName => "EntitySqls";
+        private static string DbScriptFoldername => "DbScripts";
+
         private static string GetFolderPath(string folderName = "", string fileName = "")
         {
             string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -37,34 +42,15 @@ namespace FliveCLI.Utils
                 Directory.Delete(GetFolderPath(), true);
             }
 
-            Directory.CreateDirectory(GetFolderPath("DbDtos"));
-            Directory.CreateDirectory(GetFolderPath("EntitySql"));
-            Directory.CreateDirectory(GetFolderPath("DbScripts"));
+            Directory.CreateDirectory(GetFolderPath(DbDtoFolderName));
+            Directory.CreateDirectory(GetFolderPath(EntitySqlFolderName));
+            Directory.CreateDirectory(GetFolderPath(DbScriptFoldername));
             return true;
         }
 
-        internal static void DeleteFile(string fileName, string folderName)
+        internal static void WriteDBScript(StringContentList stringContent)
         {
-            var fullPath = GetFolderPath(folderName);
-            fullPath = Path.Combine(fullPath, fileName);
-            if (File.Exists(fullPath))
-            {
-                File.Delete(fullPath);
-            }
-        }
-
-        internal static void DeleteFile(string folderName)
-        {
-            var fullPath = GetFolderPath(folderName);
-            Directory.Delete(fullPath, true);
-        }
-
-        internal static void WriteDBScript(StringContentList stringContent, string fileName, string folderName)
-        {
-            var fullPath = GetFolderPath(folderName);
-            Directory.CreateDirectory(fullPath);
-
-            fullPath = Path.Combine(fullPath, fileName);
+            var fullPath = GetFolderPath(DbScriptFoldername, "DbScripts.sql");
             bool append = true;
             var tab = "    ";
 
@@ -83,15 +69,10 @@ namespace FliveCLI.Utils
             writer.WriteLine();
         }
 
-        internal static void WriteEntitySql(TableEntity tableEntity, string folderName, string namespaceName = "")
+        internal static void WriteEntitySql(TableEntity tableEntity, string namespaceName = "")
         {
             var fileName = tableEntity.ClassName + "EntitySql.cs";
-            DeleteFile(fileName, folderName);
-
-            var fullPath = GetFolderPath(folderName);
-            Directory.CreateDirectory(fullPath);
-
-            fullPath = Path.Combine(fullPath, fileName);
+            var fullPath = GetFolderPath(EntitySqlFolderName, fileName);
             bool append = true;
             var tab4 = "    ";
             var tab8 = "        ";
@@ -132,28 +113,14 @@ namespace FliveCLI.Utils
             writer.WriteLine("}");
         }
 
-        internal static void WriteDto(TableEntity tableEntity, string folderName = "DbDtos", string namespaceName = "")
+        internal static void WriteDto(TableEntity tableEntity,  string namespaceName = "")
         {
             var usingStatements = new HashSet<string>();
             var classFields = new StringBuilder();
-            var fieldprops = tableEntity.EntityColumns;
-            foreach (var col in fieldprops)
-            {
-                var lastDotIndex = col.FieldType.LastIndexOf('.');
-                if (lastDotIndex > 0)
-                {
-                    usingStatements.Add(col.FieldType[..lastDotIndex]);
-                }
+            ProcessFields(tableEntity.EntityColumns, usingStatements, classFields);
 
-                var nullable = col.IsNullable ? "?" : "";
-                var fieldType = DotnetTypeMapping.TypeMapper[col.FieldType];
-                classFields.AppendLine($"    public {fieldType}{nullable} {col.FieldName} {{ get; set; }}");
-            }
-
-            var fileName = tableEntity.ClassName + "Dto.cs";
-            var fullPath = GetFolderPath(folderName, fileName);
-            bool append = true;
-            using StreamWriter writer = new StreamWriter(fullPath, append);
+            var fullPath = GetFolderPath(DbDtoFolderName, tableEntity.ClassName + "Dto.cs");
+            using StreamWriter writer = new StreamWriter(fullPath, true);
             foreach (var item in usingStatements)
             {
                 writer.WriteLine($"using {item};");
@@ -174,6 +141,22 @@ namespace FliveCLI.Utils
             writer.WriteLine("{");
             writer.Write(classFields.ToString());
             writer.WriteLine("}");
+        }
+
+        private static void ProcessFields(List<BaseEntityColumn> entityColumns, HashSet<string> usingStatements, StringBuilder classFields)
+        {
+            foreach (var col in entityColumns)
+            {
+                var lastDotIndex = col.FieldType.LastIndexOf('.');
+                if (lastDotIndex > 0)
+                {
+                    usingStatements.Add(col.FieldType[..lastDotIndex]);
+                }
+
+                var nullable = col.IsNullable ? "?" : "";
+                var fieldType = DotnetTypeMapping.TypeMapper[col.FieldType];
+                classFields.AppendLine($"    public {fieldType}{nullable} {col.FieldName} {{ get; set; }}");
+            }
         }
     }
 }

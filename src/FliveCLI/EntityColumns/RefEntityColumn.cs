@@ -11,7 +11,7 @@ namespace FliveCLI.EntityColumns
         }
 
         public override string ColumnName => GetRefColumnName();
-
+        public override string FieldName => GetRefFieldName();
         public override string FieldType
         {
             get
@@ -60,6 +60,19 @@ namespace FliveCLI.EntityColumns
             return ReferenceTable.PrimaryKeyColumn.PkColumn.ColumnName.StartsWith(ReferenceTable.Name)
                 ? ReferenceTable.PrimaryKeyColumn.PkColumn.ColumnName
                 : $"{ReferenceTable.Name}{ReferenceTable.PrimaryKeyColumn.PkColumn.ColumnName}";
+        }
+
+        private string GetRefFieldName()
+        {
+            if (ReferenceTable.PrimaryKeyColumn is null)
+            {
+                return string.Empty;
+            }
+
+            return ReferenceTable.PrimaryKeyColumn.PkColumn.FieldName
+                .StartsWith(ReferenceTable.ClassName, StringComparison.OrdinalIgnoreCase)
+                    ? ReferenceTable.PrimaryKeyColumn.PkColumn.FieldName
+                    : $"{ReferenceTable.ClassName}{ReferenceTable.PrimaryKeyColumn.PkColumn.FieldName}";
         }
     }
 }

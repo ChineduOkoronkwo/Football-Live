@@ -150,8 +150,8 @@ public static class Program
         }
 
         // Write the Repo class
-        FileWriter.WriteDBScript(tableEntity.GenerateCreateTableSql(), "DbScripts.sql", "DbScripts");
-        FileWriter.WriteEntitySql(tableEntity, "EntitySql");
+        FileWriter.WriteDBScript(tableEntity.GenerateCreateTableSql());
+        FileWriter.WriteEntitySql(tableEntity);
         FileWriter.WriteDto(tableEntity);
     }
 

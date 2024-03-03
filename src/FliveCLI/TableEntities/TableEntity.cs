@@ -31,7 +31,6 @@ namespace FliveCLI.TableEntities
                 }
 
                 cols.AddRange(AttributeColumns);
-                cols.AddRange(ReferenceColumns);
                 return cols;
             }
         }
