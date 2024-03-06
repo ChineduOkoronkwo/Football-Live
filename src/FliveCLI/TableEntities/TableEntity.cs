@@ -49,17 +49,23 @@ namespace FliveCLI.TableEntities
         public StringContentList GenerateListSql()
         {
             var cols = GetColumnNames();
+            var dtoColumns = new List<BaseEntityColumn>();
             var filterSqlList = new List<string>();
-            var pkColumName = PrimaryKeyColumn?.PkColumn.ColumnName;
+            var pkColumn = PrimaryKeyColumn?.PkColumn;
             var orderByClause = "";
-            if (!string.IsNullOrWhiteSpace(pkColumName))
+            if (pkColumn is not null)
             {
-                filterSqlList.Add($"AND (@{pkColumName} IS NULL OR {pkColumName} = @{pkColumName})");
-                orderByClause = $"ORDER BY {pkColumName} ASC";
+                dtoColumns.Add(new ListDtoColumn(pkColumn.ColumnName, pkColumn.FieldType, pkColumn.DbType));
+                orderByClause = $"ORDER BY {pkColumn.ColumnName} ASC";
             }
 
-            ReferenceColumns.ForEach(col => filterSqlList.Add(
-                $"AND (@{col.ColumnName} IS NULL OR {col.ColumnName} = @{col.ColumnName})"
+            foreach (var col in ReferenceColumns)
+            {
+                dtoColumns.Add(new ListDtoColumn(col.ColumnName, col.FieldType, col.DbType));
+            }
+
+            dtoColumns.ForEach(col => filterSqlList.Add(
+                $"AND (@{col.ColumnName} IS NULL OR {col.ColumnName} in @{col.ColumnName})"
             ));
 
             if (filterSqlList.Count > 0)

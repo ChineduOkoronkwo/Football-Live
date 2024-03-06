@@ -117,13 +117,14 @@ namespace FliveCLI.Utils
         {
             WriteDto(tableEntity.EntityColumns, tableEntity.ClassName + "Dto", namespaceName);
 
-            // Dto for Get and Delete params
-            var cols = new List<BaseEntityColumn> { };
+            var cols = new List<BaseEntityColumn>(); // Dto fields for Get and Delete params
+            var listDtoColumns = new List<BaseEntityColumn>(); // Dto field for List params
             if (tableEntity.PrimaryKeyColumn is not null)
             {
                 var pkColumn = tableEntity.PrimaryKeyColumn.PkColumn;
                 var dtoName = $"{pkColumn.FieldName}{pkColumn.FieldType}Dto";
                 cols.Add(pkColumn);
+                listDtoColumns.Add(new ListDtoColumn(pkColumn.ColumnName, pkColumn.FieldType, pkColumn.DbType));
                 if (!createdDtos.Contains(dtoName))
                 {
                     WriteDto(cols, dtoName, namespaceName);
@@ -140,8 +141,12 @@ namespace FliveCLI.Utils
             }
 
             // Dto for List params
-            cols.AddRange(tableEntity.ReferenceColumns);
-            WriteDto(cols, tableEntity.ClassName + "ListDto", namespaceName, " : " + paginationDtoName);
+            foreach (var col in tableEntity.ReferenceColumns)
+            {
+                listDtoColumns.Add(new ListDtoColumn(col.ColumnName, col.FieldType, col.DbType));
+            }
+
+            WriteDto(listDtoColumns, tableEntity.ClassName + "ListDto", namespaceName, " : " + paginationDtoName);
         }
 
         private static void WriteDto(List<BaseEntityColumn> entityColumns, string dtoName, string namespaceName, string baseClassSuffix = "")

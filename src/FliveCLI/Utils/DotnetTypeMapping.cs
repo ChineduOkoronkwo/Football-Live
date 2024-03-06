@@ -23,6 +23,9 @@ namespace FliveCLI.Utils
                 { "System.Single", "float" },
                 { "System.String", "string" },
                 { "System.TimeSpan", "TimeSpan" },
+                { "IEnumerable<System.Int32>", "IEnumerable<int>" },
+                { "IEnumerable<System.Guid>", "IEnumerable<Guid>" },
+                { "IEnumerable<System.String>", "IEnumerable<string>" }
             };
         }
 
