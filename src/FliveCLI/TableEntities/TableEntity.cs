@@ -35,6 +35,8 @@ namespace FliveCLI.TableEntities
             }
         }
 
+        public List<BaseEntityColumn> ListDtoFilterColumns => GetListDtoColumns();
+
         public StringContentList GenerateGetSql()
         {
             var cols = GetColumnNames();
@@ -49,22 +51,15 @@ namespace FliveCLI.TableEntities
         public StringContentList GenerateListSql()
         {
             var cols = GetColumnNames();
-            var dtoColumns = new List<BaseEntityColumn>();
             var filterSqlList = new List<string>();
             var pkColumn = PrimaryKeyColumn?.PkColumn;
             var orderByClause = "";
             if (pkColumn is not null)
             {
-                dtoColumns.Add(new ListDtoColumn(pkColumn.ColumnName, pkColumn.FieldType, pkColumn.DbType));
                 orderByClause = $"ORDER BY {pkColumn.ColumnName} ASC";
             }
 
-            foreach (var col in ReferenceColumns)
-            {
-                dtoColumns.Add(new ListDtoColumn(col.ColumnName, col.FieldType, col.DbType));
-            }
-
-            dtoColumns.ForEach(col => filterSqlList.Add(
+            ListDtoFilterColumns.ForEach(col => filterSqlList.Add(
                 $"AND (@{col.ColumnName} IS NULL OR {col.ColumnName} in @{col.ColumnName})"
             ));
 
@@ -149,7 +144,7 @@ namespace FliveCLI.TableEntities
             }
 
             var lastIndex = sqlList.Count - 1;
-            sqlList[lastIndex] = RemoveChar(sqlList[lastIndex], ',');
+            sqlList[lastIndex] = RemoveLastOccuranceOfChar(sqlList[lastIndex], ',');
             sqlList.Add(");");
 
             return sqlList;
@@ -198,7 +193,14 @@ namespace FliveCLI.TableEntities
             return string.IsNullOrWhiteSpace(pkColumName) ? "" : $"WHERE {pkColumName} = @{pkColumName}";
         }
 
-        private static string RemoveChar(string str, char oldChar)
+        private List<BaseEntityColumn> GetListDtoColumns()
+        {
+            var cols = new List<BaseEntityColumn>();
+            ReferenceColumns.ForEach(col => cols.Add(new ListDtoColumn(col.FieldName, col.FieldType, col.DbType)));
+            return cols;
+        }
+
+        private static string RemoveLastOccuranceOfChar(string str, char oldChar)
         {
             var indexOfOldChar = str.LastIndexOf(oldChar);
             return $"{str[..indexOfOldChar]}{str[(indexOfOldChar + 1)..]}";

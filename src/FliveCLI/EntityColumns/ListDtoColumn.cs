@@ -7,7 +7,7 @@ namespace FliveCLI.EntityColumns
         }
 
         public override string ColumnName => base.ColumnName + "list";
-        public override string FieldName => base.FieldName + "list";
+        public override string FieldName => base.FieldName + "List";
         public override string FieldType => $"IEnumerable<{base.FieldType}>";
     }
 }
