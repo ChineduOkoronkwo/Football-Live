@@ -196,6 +196,12 @@ namespace FliveCLI.TableEntities
         private List<BaseEntityColumn> GetListDtoColumns()
         {
             var cols = new List<BaseEntityColumn>();
+            var pkCol = PrimaryKeyColumn?.PkColumn;
+            if (pkCol is not null)
+            {
+                cols.Add(new ListDtoColumn(pkCol.FieldName, pkCol.FieldType, pkCol.DbType));
+            }
+
             ReferenceColumns.ForEach(col => cols.Add(new ListDtoColumn(col.FieldName, col.FieldType, col.DbType)));
             return cols;
         }

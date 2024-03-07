@@ -196,10 +196,17 @@ namespace FliveCLI.Utils
         {
             foreach (var col in entityColumns)
             {
-                var lastDotIndex = col.FieldType.LastIndexOf('.');
-                if (lastDotIndex > 0)
+                if (col.FieldType.StartsWith("IEnumerable"))
                 {
-                    usingStatements.Add(col.FieldType[..lastDotIndex]);
+                    usingStatements.Add("System.Collections.Generic");
+                }
+                else
+                {
+                    var lastDotIndex = col.FieldType.LastIndexOf('.');
+                    if (lastDotIndex > 0)
+                    {
+                        usingStatements.Add(col.FieldType[..lastDotIndex]);
+                    }
                 }
 
                 var nullable = col.IsNullable ? "?" : "";
