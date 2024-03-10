@@ -1,39 +1,70 @@
 using FliveCLI.TableEntities;
+using FliveCLI.Utils;
 
 namespace FliveCLI.Writers
 {
     public static class FileWriter
     {
-        internal static string GetPath(string folderName = "", string fileName = "")
+        internal static void CreateRepo(TableEntity[] tableEntities)
         {
-            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string appFolder = "Gol";
-            return Path.Combine(appDataFolder, appFolder, folderName, fileName);
+            var deleted = DeleteAndCreateDirectories(true);
+            if (deleted)
+            {
+                var visited = new HashSet<TableEntity>();
+                var createdDtos = new HashSet<string>();
+                foreach (var entity in tableEntities)
+                {
+                    CreateRepo(entity, visited, createdDtos);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Operation was cancelled");
+            }
         }
 
-        internal static void WriteEntityRepoFiles(TableEntity tableEntity, HashSet<string> createdDtos)
+        private static void CreateRepo(TableEntity tableEntity, HashSet<TableEntity> visited, HashSet<string> createdDtos)
+        {
+            if (visited.Contains(tableEntity))
+            {
+                return;
+            }
+
+            visited.Add(tableEntity);
+
+            foreach (var entity in tableEntity.RefEntities)
+            {
+                CreateRepo(entity, visited, createdDtos);
+            }
+
+            // Write repo files
+            WriteEntityRepoFiles(tableEntity, createdDtos);
+        }
+
+        private static void WriteEntityRepoFiles(TableEntity tableEntity, HashSet<string> createdDtos)
         {
             var tab4 = "    ";
             var tab8 = "        ";
             var append = true;
 
             // write db script
-            var filePath = GetPath(DbScriptWriter.Foldername, DbScriptWriter.FileNamePrefix);
+            var filePath = FileUtil.GetPath(DbScriptWriter.Foldername, DbScriptWriter.FileNamePrefix);
             DbScriptWriter.Write(tableEntity, filePath, append, tab4);
 
             // write entity sql class
-            filePath = GetPath(EntitySqlWriter.Foldername, tableEntity.ClassName + EntitySqlWriter.FileNamePrefix);
+            filePath = FileUtil.GetPath(EntitySqlWriter.Foldername, tableEntity.ClassName + EntitySqlWriter.FileNamePrefix);
             EntitySqlWriter.Write(tableEntity, filePath, append, tab4, tab8);
 
             // write db dto class
             DbDtoWrite.Write(tableEntity, createdDtos);
         }
 
-        internal static bool DeleteAndCreateDirectories(bool confirmed = false)
+        private static bool DeleteAndCreateDirectories(bool confirmed = false)
         {
+            var path = FileUtil.GetPath();
             if (!confirmed)
             {
-                Console.WriteLine($"Warning! All existing contents of {GetPath()} will be deleted!\nEnter Y to proceed, N to Cancel");
+                Console.WriteLine($"Warning! All existing contents of {path} will be deleted!\nEnter Y to proceed, N to Cancel");
                 var response = char.ToUpper((char)Console.Read());
                 confirmed = response switch
                 {
@@ -48,15 +79,14 @@ namespace FliveCLI.Writers
                 return false;
             }
 
-            var path = GetPath();
             if (Directory.Exists(path))
             {
                 Directory.Delete(path, true);
             }
 
-            Directory.CreateDirectory(GetPath(DbDtoWrite.Foldername));
-            Directory.CreateDirectory(GetPath(EntitySqlWriter.Foldername));
-            Directory.CreateDirectory(GetPath(DbScriptWriter.Foldername));
+            Directory.CreateDirectory(FileUtil.GetPath(DbDtoWrite.Foldername));
+            Directory.CreateDirectory(FileUtil.GetPath(EntitySqlWriter.Foldername));
+            Directory.CreateDirectory(FileUtil.GetPath(DbScriptWriter.Foldername));
             return true;
         }
     }

@@ -116,3 +116,6 @@ dotnet_diagnostic.S125.severity = None
     
 # 'System.Exception' should not be thrown by user code
 dotnet_diagnostic.S112.severity = None
+
+# Default severity for analyzer diagnostics with category 'Style'
+dotnet_analyzer_diagnostic.category-Style.severity = none

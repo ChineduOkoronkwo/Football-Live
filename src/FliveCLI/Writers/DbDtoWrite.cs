@@ -44,7 +44,7 @@ namespace FliveCLI.Writers
             var classFields = new StringBuilder();
             ProcessFields(entityColumns, usingStatements, classFields);
 
-            var fullPath = FileWriter.GetPath(Foldername, dtoName + ".cs");
+            var fullPath = FileUtil.GetPath(Foldername, dtoName + ".cs");
             using StreamWriter writer = new StreamWriter(fullPath, true);
             foreach (var item in usingStatements)
             {
@@ -70,7 +70,7 @@ namespace FliveCLI.Writers
 
         private static void WritePaginationDto(string dtoName, string namespaceName)
         {
-            var fullPath = FileWriter.GetPath(Foldername, dtoName + ".cs");
+            var fullPath = FileUtil.GetPath(Foldername, dtoName + ".cs");
             using StreamWriter writer = new StreamWriter(fullPath, true);
             writer.WriteLine("using System;");
             writer.WriteLine();
