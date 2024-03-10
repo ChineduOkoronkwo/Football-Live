@@ -14,7 +14,7 @@ namespace FliveCLI.Utils
                 { "System.DateTime", "TIMESTAMP" },
                 { "System.DateTimeOffset", "TIMESTAMP WITH TIME ZONE" },
                 { "System.Decimal", "NUMERIC" },
-                { "System.Double", "DOUBLE PRECISSION" },
+                { "System.Double", "DOUBLE PRECISION" },
                 { "System.Guid", "UUID" },
                 { "System.Int16", "SMALLINT" },
                 { "System.Int32", "INTEGER" },
