@@ -48,12 +48,10 @@ namespace FliveCLI.Writers
             var append = true;
 
             // write db script
-            var filePath = FileUtil.GetPath(DbScriptWriter.Foldername, DbScriptWriter.FileNamePrefix);
-            DbScriptWriter.Write(tableEntity, filePath, append, tab4);
+            DbScriptWriter.Write(tableEntity, append, tab4);
 
             // write entity sql class
-            filePath = FileUtil.GetPath(EntitySqlWriter.Foldername, tableEntity.ClassName + EntitySqlWriter.FileNamePrefix);
-            EntitySqlWriter.Write(tableEntity, filePath, append, tab4, tab8);
+            EntitySqlWriter.Write(tableEntity, append, tab4, tab8);
 
             // write db dto class
             DbDtoWrite.Write(tableEntity, createdDtos);

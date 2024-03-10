@@ -1,13 +1,15 @@
 using FliveCLI.TableEntities;
+using FliveCLI.Utils;
 
 namespace FliveCLI.Writers
 {
     public static class EntitySqlWriter
     {
         internal static string Foldername => "EntitySqls";
-        internal static string FileNamePrefix => "EntitySql.cs";
-        internal static void Write(TableEntity tableEntity, string filePath, bool append, string tab4, string tab8, string namespaceName = "")
+        private static string FileNamePrefix => "EntitySql.cs";
+        internal static void Write(TableEntity tableEntity, bool append, string tab4, string tab8, string namespaceName = "")
         {
+            var filePath = FileUtil.GetPath(Foldername, tableEntity.ClassName + FileNamePrefix);
             using StreamWriter writer = new StreamWriter(filePath, append);
             writer.WriteLine("using Dal.Interfaces;");
             writer.WriteLine();
