@@ -5,7 +5,7 @@ namespace FliveCLI.Writers
 {
     public static class FileWriter
     {
-        internal static void CreateRepo(TableEntity[] tableEntities)
+        internal static void CreateRepo(TableEntity[] tableEntities, HashSet<string> exclude)
         {
             var deleted = DeleteAndCreateDirectories(true);
             if (deleted)
@@ -14,7 +14,10 @@ namespace FliveCLI.Writers
                 var createdDtos = new HashSet<string>();
                 foreach (var entity in tableEntities)
                 {
-                    CreateRepo(entity, visited, createdDtos);
+                    if (!(exclude.Contains(entity.ClassName) || exclude.Contains(entity.FullName)))
+                    {
+                        CreateRepo(entity, visited, createdDtos);
+                    }
                 }
             }
             else
