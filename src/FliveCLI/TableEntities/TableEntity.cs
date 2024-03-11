@@ -16,6 +16,9 @@ namespace FliveCLI.TableEntities
         public string FullName { get; }
         public string Name { get; }
         public string ClassName { get; }
+        public string TEntityName => $"{ClassName}Dto";
+        public string TGetParamName => GetEntityIdDtoName();
+        public string TListParamName => ClassName + "ListDto";
         public List<BaseEntityColumn> AttributeColumns { get; internal set; } = default!;
         public List<RefEntityColumn> ReferenceColumns { get; internal set; } = default!;
         public List<TableEntity> RefEntities { get; internal set; }
@@ -210,6 +213,17 @@ namespace FliveCLI.TableEntities
         {
             var indexOfOldChar = str.LastIndexOf(oldChar);
             return $"{str[..indexOfOldChar]}{str[(indexOfOldChar + 1)..]}";
+        }
+
+        private string GetEntityIdDtoName()
+        {
+            var pkCol = PrimaryKeyColumn?.PkColumn;
+            if (pkCol is not null)
+            {
+                return $"{EntityIdDto.EntityIdDtoMapper[pkCol.FieldType]}{pkCol.FieldName}Dto";
+            }
+
+            return "";
         }
     }
 }

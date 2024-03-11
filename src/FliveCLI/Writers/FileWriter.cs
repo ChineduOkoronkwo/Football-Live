@@ -55,6 +55,9 @@ namespace FliveCLI.Writers
 
             // write db dto class
             DbDtoWrite.Write(tableEntity, createdDtos);
+
+            // write repo class
+            RepoWriter.Write(tableEntity, append, tab4, tab8);
         }
 
         private static bool DeleteAndCreateDirectories(bool confirmed = false)
@@ -85,6 +88,7 @@ namespace FliveCLI.Writers
             Directory.CreateDirectory(FileUtil.GetPath(DbDtoWrite.Foldername));
             Directory.CreateDirectory(FileUtil.GetPath(EntitySqlWriter.Foldername));
             Directory.CreateDirectory(FileUtil.GetPath(DbScriptWriter.Foldername));
+            Directory.CreateDirectory(FileUtil.GetPath(RepoWriter.Foldername));
             return true;
         }
     }
