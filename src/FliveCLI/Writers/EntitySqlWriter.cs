@@ -7,7 +7,7 @@ namespace FliveCLI.Writers
     {
         internal static string Foldername => "EntitySqls";
         private static string FileNamePrefix => "EntitySql.cs";
-        internal static void Write(TableEntity tableEntity, bool append, string tab4, string tab8, string namespaceName = "")
+        internal static void Write(TableEntity tableEntity, bool append, string tab4, string tab8, string namespaceName = "Dal.EntitySqls")
         {
             var filePath = FileUtil.GetPath(Foldername, tableEntity.ClassName + FileNamePrefix);
             using StreamWriter writer = new StreamWriter(filePath, append);

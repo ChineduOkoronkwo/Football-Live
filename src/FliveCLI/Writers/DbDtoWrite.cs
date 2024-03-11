@@ -8,7 +8,7 @@ namespace FliveCLI.Writers
     public static class DbDtoWrite
     {
         internal static string Foldername => "DbDtos";
-        internal static void Write(TableEntity tableEntity,  HashSet<string> createdDtos, string namespaceName = "")
+        internal static void Write(TableEntity tableEntity,  HashSet<string> createdDtos, string namespaceName = "Dal.Dtos")
         {
             Write(tableEntity.EntityColumns, tableEntity.TEntityName, namespaceName);
 
@@ -105,7 +105,8 @@ namespace FliveCLI.Writers
 
                 var nullable = col.IsNullable ? "?" : "";
                 var fieldType = DotnetTypeMapping.TypeMapper[col.FieldType];
-                classFields.AppendLine($"    public {fieldType}{nullable} {col.FieldName} {{ get; set; }}");
+                var defaultValue = !col.IsNullable && fieldType.Equals("string") ? " = default!;" : "";
+                classFields.AppendLine($"    public {fieldType}{nullable} {col.FieldName} {{ get; set; }}{defaultValue}");
             }
         }
     }
