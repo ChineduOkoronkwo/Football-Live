@@ -17,8 +17,8 @@ namespace FliveCLI.TableEntities
         public string Name { get; }
         public string ClassName { get; }
         public string TEntityName => $"{ClassName}Dto";
-        public string TGetParamName => GetEntityIdDtoName();
-        public string TListParamName => ClassName + "ListDto";
+        public string TGetParamEntityName => GetEntityIdDtoName();
+        public string TListParamEntityName => ClassName + "ListDto";
         public List<BaseEntityColumn> AttributeColumns { get; internal set; } = default!;
         public List<RefEntityColumn> ReferenceColumns { get; internal set; } = default!;
         public List<TableEntity> RefEntities { get; internal set; }

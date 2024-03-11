@@ -10,15 +10,14 @@ namespace FliveCLI.Writers
         internal static string Foldername => "DbDtos";
         internal static void Write(TableEntity tableEntity,  HashSet<string> createdDtos, string namespaceName = "")
         {
-            Write(tableEntity.EntityColumns, tableEntity.ClassName + "Dto", namespaceName);
+            Write(tableEntity.EntityColumns, tableEntity.TEntityName, namespaceName);
 
             // Dto fields for Get and Delete params
             var cols = new List<BaseEntityColumn>();
             if (tableEntity.PrimaryKeyColumn is not null)
             {
-                var pkColumn = tableEntity.PrimaryKeyColumn.PkColumn;
-                var dtoName = $"{pkColumn.FieldName}{pkColumn.FieldType}Dto";
-                cols.Add(pkColumn);
+                var dtoName = tableEntity.TGetParamEntityName;
+                cols.Add(tableEntity.PrimaryKeyColumn.PkColumn);
                 if (!createdDtos.Contains(dtoName))
                 {
                     Write(cols, dtoName, namespaceName);
@@ -35,7 +34,7 @@ namespace FliveCLI.Writers
             }
 
             // List Dto
-            Write(tableEntity.ListDtoFilterColumns, tableEntity.ClassName + "ListDto", namespaceName, " : " + paginationDtoName);
+            Write(tableEntity.ListDtoFilterColumns, tableEntity.TListParamEntityName, namespaceName, " : " + paginationDtoName);
         }
 
         private static void Write(List<BaseEntityColumn> entityColumns, string dtoName, string namespaceName, string baseClassSuffix = "")

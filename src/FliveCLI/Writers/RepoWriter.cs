@@ -26,14 +26,14 @@ namespace FliveCLI.Writers
 
             // GetAsync
             var tEntity = tableEntity.TEntityName;
-            var tParam = tableEntity.TGetParamName;
+            var tParam = tableEntity.TGetParamEntityName;
             writer.WriteLine($"{tab4}public async Task<{tEntity}> GetAsync<{tEntity}, {tParam}>({tParam} param)");
             writer.WriteLine($"{tab4}{{");
             writer.WriteLine($"{tab8}return await dapperService.QueryAsync<{tEntity}>(entitySqlCommand.ListSqlCommand, param);");
             writer.WriteLine($"{tab4}}}");
 
             // ListAsync
-            tParam = tableEntity.TListParamName;
+            tParam = tableEntity.TListParamEntityName;
             writer.WriteLine($"{tab4}public async Task<IEnumerable<{tEntity}>> ListAsync<{tEntity}, {tParam}>(tParam? param)");
             writer.WriteLine($"{tab4}{{");
             writer.WriteLine($"{tab8}return await dapperService.QuerySingleAsync<{tEntity}>(entitySqlCommand.GetSqlCommand, param);");
