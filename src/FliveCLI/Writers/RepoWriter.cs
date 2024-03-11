@@ -32,6 +32,7 @@ namespace FliveCLI.Writers
             writer.WriteLine($"{tab4}{{");
             writer.WriteLine($"{tab8}return await dapperService.QuerySingleAsync<{tEntity}>(entitySqlCommand.ListSqlCommand, param);");
             writer.WriteLine($"{tab4}}}");
+            writer.WriteLine();
 
             // ListAsync
             tParam = tableEntity.TListParamEntityName;
@@ -39,18 +40,21 @@ namespace FliveCLI.Writers
             writer.WriteLine($"{tab4}{{");
             writer.WriteLine($"{tab8}return await dapperService.QueryAsync<{tEntity}>(entitySqlCommand.GetSqlCommand, param);");
             writer.WriteLine($"{tab4}}}");
+            writer.WriteLine();
 
             // CreateAsync
             writer.WriteLine($"{tab4}public async Task<int> CreateAsync({tEntity} param)");
             writer.WriteLine($"{tab4}{{");
             writer.WriteLine($"{tab8}return await dapperService.ExecuteAsync(entitySqlCommand.CreateSqlCommand, param);");
             writer.WriteLine($"{tab4}}}");
+            writer.WriteLine();
 
             // UpdateAsync
             writer.WriteLine($"{tab4}public async Task<int> UpdateAsync({tEntity} param)");
             writer.WriteLine($"{tab4}{{");
             writer.WriteLine($"{tab8}return await dapperService.ExecuteAsync(entitySqlCommand.UpdateSqlCommand, param);");
             writer.WriteLine($"{tab4}}}");
+            writer.WriteLine();
 
             // DeleteAsync
             writer.WriteLine($"{tab4}public async Task<int> DeleteAsync({tEntity} param)");

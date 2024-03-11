@@ -5,6 +5,8 @@ namespace FliveCLI.Writers
 {
     public static class FileWriter
     {
+        private static string tab4 = "    ";
+        private static string tab8 = "        ";
         internal static void CreateRepo(TableEntity[] tableEntities, HashSet<string> exclude)
         {
             var deleted = DeleteAndCreateDirectories(true);
@@ -19,6 +21,9 @@ namespace FliveCLI.Writers
                         CreateRepo(entity, visited, createdDtos);
                     }
                 }
+
+                // Write interfaces and services
+                WriteDalFiles();
             }
             else
             {
@@ -44,10 +49,17 @@ namespace FliveCLI.Writers
             WriteEntityRepoFiles(tableEntity, createdDtos);
         }
 
+        private static void WriteDalFiles()
+        {
+            // write interfaces
+            InterfaceWriter.Write(tab4);
+
+            // write dapper service
+            ServiceWriter.Write(tab4, tab8);
+        }
+
         private static void WriteEntityRepoFiles(TableEntity tableEntity, HashSet<string> createdDtos)
         {
-            var tab4 = "    ";
-            var tab8 = "        ";
             var append = true;
 
             // write db script
@@ -92,6 +104,8 @@ namespace FliveCLI.Writers
             Directory.CreateDirectory(FileUtil.GetPath(EntitySqlWriter.Foldername));
             Directory.CreateDirectory(FileUtil.GetPath(DbScriptWriter.Foldername));
             Directory.CreateDirectory(FileUtil.GetPath(RepoWriter.Foldername));
+            Directory.CreateDirectory(FileUtil.GetPath(InterfaceWriter.Foldername));
+            Directory.CreateDirectory(FileUtil.GetPath(ServiceWriter.Foldername));
             return true;
         }
     }
