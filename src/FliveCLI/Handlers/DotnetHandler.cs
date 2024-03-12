@@ -5,11 +5,8 @@ namespace FliveCLI.Handlers
 {
     internal static class DotnetHandler
     {
-        internal static void CreateProject(string projectName)
+        private static void RunCommands(string cmdArgs)
         {
-            // Specify the directory where you want to create the project
-            string projectDirectory = FileUtil.GetPath();
-
             // Create a new process
             Process process = new Process();
 
@@ -17,7 +14,7 @@ namespace FliveCLI.Handlers
             process.StartInfo.FileName = "dotnet";
 
             // Set arguments to create a new project dotnet new classlib -n YourLibraryName
-            process.StartInfo.Arguments = $"new classlib -n {projectName} -o {projectDirectory}";
+            process.StartInfo.Arguments = cmdArgs;
 
             // Redirect standard output and error to read the output
             process.StartInfo.RedirectStandardOutput = true;
@@ -58,8 +55,19 @@ namespace FliveCLI.Handlers
 
             // Close the process after it's done
             process.Close();
+        }
 
+        internal static void CreateProject(string projectName)
+        {
+            string projectDirectory = FileUtil.GetPath(projectName);
+
+            // Create project
+            RunCommands($"new classlib -n {projectName} -o {projectDirectory}");
             Console.WriteLine("Project creation completed.");
+
+            // Add reference to dapper package
+            RunCommands($"add {projectDirectory}/{projectName}.csproj package Dapper");
+            Console.WriteLine("Dapper package reference added.");
         }
     }
 }

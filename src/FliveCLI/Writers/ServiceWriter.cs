@@ -6,14 +6,14 @@ namespace FliveCLI.Writers
     {
         internal static string Foldername => "Services";
 
-        internal static void Write(string tab4, string tab8, string namespaceName = "Dal.Services")
+        internal static void Write(string projectName, string tab4, string tab8, string namespaceName = "Dal.Services")
         {
-            WriteDapperService(tab4, tab8, namespaceName);
+            WriteDapperService(projectName, tab4, tab8, namespaceName);
         }
 
-        private static void WriteDapperService(string tab4, string tab8, string namespaceName)
+        private static void WriteDapperService(string projectName, string tab4, string tab8, string namespaceName)
         {
-            var fullPath = FileUtil.GetPath(Foldername, "DapperService.cs");
+            var fullPath = FileUtil.GetPath(projectName, Foldername, "DapperService.cs");
             using StreamWriter writer = new StreamWriter(fullPath, true);
             writer.WriteLine("using System.Data;");
             writer.WriteLine("using Dal.Interfaces;");

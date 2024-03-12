@@ -8,9 +8,9 @@ namespace FliveCLI.Writers
     public static class DbDtoWrite
     {
         internal static string Foldername => "DbDtos";
-        internal static void Write(TableEntity tableEntity,  HashSet<string> createdDtos, string namespaceName = "Dal.Dtos")
+        internal static void Write(TableEntity tableEntity,  HashSet<string> createdDtos, string projectName, string namespaceName = "Dal.Dtos")
         {
-            Write(tableEntity.EntityColumns, tableEntity.TEntityName, namespaceName);
+            WriteDtos(tableEntity.EntityColumns, tableEntity.TEntityName, projectName, namespaceName);
 
             // Dto fields for Get and Delete params
             var cols = new List<BaseEntityColumn>();
@@ -20,7 +20,7 @@ namespace FliveCLI.Writers
                 cols.Add(tableEntity.PrimaryKeyColumn.PkColumn);
                 if (!createdDtos.Contains(dtoName))
                 {
-                    Write(cols, dtoName, namespaceName);
+                    WriteDtos(cols, dtoName, projectName, namespaceName);
                     createdDtos.Add(dtoName);
                 }
             }
@@ -29,21 +29,21 @@ namespace FliveCLI.Writers
             var paginationDtoName = "PaginationDTO";
             if (!createdDtos.Contains(paginationDtoName))
             {
-                WritePaginationDto(paginationDtoName, namespaceName);
+                WritePaginationDto(paginationDtoName, projectName, namespaceName);
                 createdDtos.Add(paginationDtoName);
             }
 
             // List Dto
-            Write(tableEntity.ListDtoFilterColumns, tableEntity.TListParamEntityName, namespaceName, " : " + paginationDtoName);
+            WriteDtos(tableEntity.ListDtoFilterColumns, tableEntity.TListParamEntityName, projectName, namespaceName, " : " + paginationDtoName);
         }
 
-        private static void Write(List<BaseEntityColumn> entityColumns, string dtoName, string namespaceName, string baseClassSuffix = "")
+        private static void WriteDtos(List<BaseEntityColumn> entityColumns, string dtoName, string projectName, string namespaceName, string baseClassSuffix = "")
         {
             var usingStatements = new HashSet<string>();
             var classFields = new StringBuilder();
             ProcessFields(entityColumns, usingStatements, classFields);
 
-            var fullPath = FileUtil.GetPath(Foldername, dtoName + ".cs");
+            var fullPath = FileUtil.GetPath(projectName, Foldername, dtoName + ".cs");
             using StreamWriter writer = new StreamWriter(fullPath, true);
             foreach (var item in usingStatements)
             {
@@ -67,9 +67,9 @@ namespace FliveCLI.Writers
             writer.WriteLine("}");
         }
 
-        private static void WritePaginationDto(string dtoName, string namespaceName)
+        private static void WritePaginationDto(string dtoName, string projectName, string namespaceName)
         {
-            var fullPath = FileUtil.GetPath(Foldername, dtoName + ".cs");
+            var fullPath = FileUtil.GetPath(projectName, Foldername, dtoName + ".cs");
             using StreamWriter writer = new StreamWriter(fullPath, true);
             writer.WriteLine("using System;");
             writer.WriteLine();

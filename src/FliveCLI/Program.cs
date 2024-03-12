@@ -39,7 +39,6 @@ public static class Program
         var entitesToExclude = new HashSet<string>(exclude.Split(','));
         var types = TypeLoader.LoadTypesFromFile(dirPath);
         var entities = TypeLoader.CreateTableEntitiesFromType(types);
-        DotnetHandler.CreateProject(projectName);
-        FileWriter.CreateRepo(entities, entitesToExclude);
+        FileWriter.CreateRepo(entities, entitesToExclude, projectName);
     }
 }

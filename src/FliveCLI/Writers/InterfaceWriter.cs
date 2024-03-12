@@ -5,16 +5,16 @@ namespace FliveCLI.Writers
     public static class InterfaceWriter
     {
         internal static string Foldername => "Interfaces";
-        public static void Write(string tab4, string namespaceName = "Dal.Interfaces")
+        public static void Write(string projectName, string tab4, string namespaceName = "Dal.Interfaces")
         {
-            WriteIDapperService(tab4, namespaceName);
-            WriteIEntitySqlCommand(tab4, namespaceName);
-            WriteIGenericRepository(tab4, namespaceName);
+            WriteIDapperService(projectName, tab4, namespaceName);
+            WriteIEntitySqlCommand(projectName, tab4, namespaceName);
+            WriteIGenericRepository(projectName, tab4, namespaceName);
         }
 
-        private static void WriteIDapperService(string tab4, string namespaceName)
+        private static void WriteIDapperService(string projectName, string tab4, string namespaceName)
         {
-            var fullPath = FileUtil.GetPath(Foldername, "IDapperService.cs");
+            var fullPath = FileUtil.GetPath(projectName, Foldername, "IDapperService.cs");
             using StreamWriter writer = new StreamWriter(fullPath, true);
             writer.WriteLine($"namespace {namespaceName};");
             writer.WriteLine();
@@ -22,14 +22,14 @@ namespace FliveCLI.Writers
             writer.WriteLine("{");
             writer.WriteLine($"{tab4}Task<int> ExecuteAsync(string sqlCommand, object? param);");
             writer.WriteLine($"{tab4}Task<T?> ExecuteScalarAsync<T>(string sqlCommand, object? param);");
-            writer.WriteLine($"{tab4}Task<IEnumerable<T>> QueryAsync<T>(string sqlCommand, object? param);");
+            writer.WriteLine($"{tab4}Task<T> QuerySingleAsync<T>(string sqlCommand, object? param);");
             writer.WriteLine($"{tab4}Task<IEnumerable<T>> QueryAsync<T>(string sqlCommand, object? param);");
             writer.WriteLine("}");
         }
 
-        private static void WriteIEntitySqlCommand(string tab4, string namespaceName)
+        private static void WriteIEntitySqlCommand(string projectName, string tab4, string namespaceName)
         {
-            var fullPath = FileUtil.GetPath(Foldername, "IEntitySqlCommand.cs");
+            var fullPath = FileUtil.GetPath(projectName, Foldername, "IEntitySqlCommand.cs");
             using StreamWriter writer = new StreamWriter(fullPath, true);
             writer.WriteLine($"namespace {namespaceName};");
             writer.WriteLine();
@@ -43,9 +43,9 @@ namespace FliveCLI.Writers
             writer.WriteLine("}");
         }
 
-        private static void WriteIGenericRepository(string tab4, string namespaceName)
+        private static void WriteIGenericRepository(string projectName, string tab4, string namespaceName)
         {
-            var fullPath = FileUtil.GetPath(Foldername, "IGenericRepository.cs");
+            var fullPath = FileUtil.GetPath(projectName, Foldername, "IGenericRepository.cs");
             using StreamWriter writer = new StreamWriter(fullPath, true);
             writer.WriteLine($"namespace {namespaceName};");
             writer.WriteLine();

@@ -8,9 +8,9 @@ namespace FliveCLI.Writers
         internal static string Foldername => "Repos";
         private static string FileNamePrefix => "Repo.cs";
 
-        internal static void Write(TableEntity tableEntity, bool append, string tab4, string tab8, string namespaceName = "Dal.Repos")
+        internal static void Write(TableEntity tableEntity, bool append, string tab4, string tab8, string projectName, string namespaceName = "Dal.Repos")
         {
-            var filePath = FileUtil.GetPath(Foldername, tableEntity.ClassName + FileNamePrefix);
+            var filePath = FileUtil.GetPath(projectName, Foldername, tableEntity.ClassName + FileNamePrefix);
             using StreamWriter writer = new StreamWriter(filePath, append);
             writer.WriteLine("using Dal.Dtos;");
             writer.WriteLine("using Dal.Interfaces;");
@@ -59,7 +59,7 @@ namespace FliveCLI.Writers
             // DeleteAsync
             writer.WriteLine($"{tab4}public async Task<int> DeleteAsync({tEntity} param)");
             writer.WriteLine($"{tab4}{{");
-            writer.WriteLine($"{tab8}return await dapperService.ExecuteAsync<{tEntity}>(entitySqlCommand.DeleteSqlCommand, param);");
+            writer.WriteLine($"{tab8}return await dapperService.ExecuteAsync(entitySqlCommand.DeleteSqlCommand, param);");
             writer.WriteLine($"{tab4}}}");
 
             writer.WriteLine("}");
