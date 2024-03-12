@@ -26,7 +26,7 @@ namespace FliveCLI.Writers
             }
 
             // Pagination Dto
-            var paginationDtoName = "PaginationDTO";
+            var paginationDtoName = "PaginationDto";
             if (!createdDtos.Contains(paginationDtoName))
             {
                 WritePaginationDto(paginationDtoName, projectName, namespaceName);
