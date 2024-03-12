@@ -25,23 +25,23 @@ namespace FliveCLI.Writers
 
             // GetSqlCommand
             writer.WriteLine($"{tab4}public string GetSqlCommand");
-            writer.WriteLine($"{tab8}=> \"{tableEntity.GenerateGetSql()}\"");
+            writer.WriteLine($"{tab8}=> \"{tableEntity.GenerateGetSql()}\";");
 
             // ListSqlCommand
             writer.WriteLine($"{tab4}public string ListSqlCommand");
-            writer.WriteLine($"{tab8}=> \"{tableEntity.GenerateListSql()}\"");
+            writer.WriteLine($"{tab8}=> \"{tableEntity.GenerateListSql()}\";");
 
             // CreateSqlCommand
             writer.WriteLine($"{tab4}public string CreateSqlCommand");
-            writer.WriteLine($"{tab8}=> \"{tableEntity.GenerateCreateSql()}\"");
+            writer.WriteLine($"{tab8}=> \"{tableEntity.GenerateCreateSql()}\";");
 
             // DeleteSqlCommand
             writer.WriteLine($"{tab4}public string DeleteSqlCommand");
-            writer.WriteLine($"{tab8}=> \"{tableEntity.GenerateDeleteSql()}\"");
+            writer.WriteLine($"{tab8}=> \"{tableEntity.GenerateDeleteSql()}\";");
 
             // UpdateSqlCommand
             writer.WriteLine($"{tab4}public string UpdateSqlCommand");
-            writer.WriteLine($"{tab8}=> \"{tableEntity.GenerateUpdateSql()}\"");
+            writer.WriteLine($"{tab8}=> \"{tableEntity.GenerateUpdateSql()}\";");
 
             writer.WriteLine("}");
         }

@@ -28,7 +28,7 @@ namespace FliveCLI.Writers
             // GetAsync
             var tEntity = tableEntity.TEntityName;
             var tParam = tableEntity.TGetParamEntityName;
-            writer.WriteLine($"{tab4}public async Task<{tEntity}> GetAsync({tParam} param)");
+            writer.WriteLine($"{tab4}public async Task<{tEntity}> GetAsync<{tEntity}, {tParam}>({tParam} param)");
             writer.WriteLine($"{tab4}{{");
             writer.WriteLine($"{tab8}return await dapperService.QuerySingleAsync<{tEntity}>(entitySqlCommand.ListSqlCommand, param);");
             writer.WriteLine($"{tab4}}}");
@@ -36,28 +36,28 @@ namespace FliveCLI.Writers
 
             // ListAsync
             tParam = tableEntity.TListParamEntityName;
-            writer.WriteLine($"{tab4}public async Task<IEnumerable<{tEntity}>> ListAsync({tParam}? param)");
+            writer.WriteLine($"{tab4}public async Task<IEnumerable<{tEntity}>> ListAsync<{tEntity}, {tParam}>({tParam}? param)");
             writer.WriteLine($"{tab4}{{");
             writer.WriteLine($"{tab8}return await dapperService.QueryAsync<{tEntity}>(entitySqlCommand.GetSqlCommand, param);");
             writer.WriteLine($"{tab4}}}");
             writer.WriteLine();
 
             // CreateAsync
-            writer.WriteLine($"{tab4}public async Task<int> CreateAsync({tEntity} param)");
+            writer.WriteLine($"{tab4}public async Task<int> CreateAsync<{tEntity}>({tEntity} param)");
             writer.WriteLine($"{tab4}{{");
             writer.WriteLine($"{tab8}return await dapperService.ExecuteAsync(entitySqlCommand.CreateSqlCommand, param);");
             writer.WriteLine($"{tab4}}}");
             writer.WriteLine();
 
             // UpdateAsync
-            writer.WriteLine($"{tab4}public async Task<int> UpdateAsync({tEntity} param)");
+            writer.WriteLine($"{tab4}public async Task<int> UpdateAsync<{tEntity}>({tEntity} param)");
             writer.WriteLine($"{tab4}{{");
             writer.WriteLine($"{tab8}return await dapperService.ExecuteAsync(entitySqlCommand.UpdateSqlCommand, param);");
             writer.WriteLine($"{tab4}}}");
             writer.WriteLine();
 
             // DeleteAsync
-            writer.WriteLine($"{tab4}public async Task<int> DeleteAsync({tEntity} param)");
+            writer.WriteLine($"{tab4}public async Task<int> DeleteAsync<{tEntity}>({tEntity} param)");
             writer.WriteLine($"{tab4}{{");
             writer.WriteLine($"{tab8}return await dapperService.ExecuteAsync(entitySqlCommand.DeleteSqlCommand, param);");
             writer.WriteLine($"{tab4}}}");
